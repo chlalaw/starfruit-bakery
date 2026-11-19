@@ -16,17 +16,17 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
-      - name: Setup Java JDK 17
+      - name: Setup Java JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '21'
 
       - name: Instal Capacitor & Buat Proyek Android
         run: |
-          npm install
+          npm install --no-audit --no-fund
           npx cap add android
           npx cap sync android
 
@@ -34,7 +34,7 @@ jobs:
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug --no-daemon
 
       - name: Upload Hasil APK
         uses: actions/upload-artifact@v4
