@@ -1,0 +1,2470 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Starfruit Bakery - Game Kasual Kafe Kue</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-app: #FFF6F0;
+      --bg-card: #FFFFFF;
+      --bg-soft: #FFE8DC;
+      --text-main: #4A2C2A;
+      --text-muted: #8C625E;
+      --accent: #FF7B9C;
+      --accent-dark: #E65578;
+      --gold: #FFB703;
+      --border-soft: #F7D6C8;
+    }
+
+    /* Tema Kafe yang bisa dibeli di Shop */
+    body.theme-matcha {
+      --bg-app: #F1F8F2;
+      --bg-card: #FFFFFF;
+      --bg-soft: #DDF0E1;
+      --text-main: #264232;
+      --text-muted: #587A66;
+      --accent: #52B788;
+      --accent-dark: #38946A;
+      --gold: #F4A261;
+      --border-soft: #C2E3CA;
+    }
+
+    body.theme-cocoa {
+      --bg-app: #261918;
+      --bg-card: #362422;
+      --bg-soft: #47302D;
+      --text-main: #FFF1E6;
+      --text-muted: #D4B5B0;
+      --accent: #FF8FA3;
+      --accent-dark: #FF6B86;
+      --gold: #FFD166;
+      --border-soft: #593D39;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: linear-gradient(135deg, #f8e1d9 0%, #f3d2e2 100%);
+      color: var(--text-main);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+    }
+
+    body.theme-matcha {
+      background: linear-gradient(135deg, #d8eedc 0%, #e7f3d8 100%);
+    }
+    body.theme-cocoa {
+      background: linear-gradient(135deg, #1a100f 0%, #2f1d1c 100%);
+    }
+
+    h1, h2, h3, .font-display {
+      font-family: 'Fredoka', cursive, sans-serif;
+    }
+
+    /* Frame Layar Mobile Responsif */
+    #app-shell {
+      width: 100%;
+      max-width: 440px;
+      height: 100dvh;
+      max-height: 880px;
+      background-color: var(--bg-app);
+      border-radius: 0px;
+      box-shadow: 0 24px 60px rgba(74, 44, 42, 0.22);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      transition: background-color 0.35s ease, color 0.35s ease;
+    }
+
+    @media (min-width: 480px) {
+      #app-shell {
+        height: 94vh;
+        border-radius: 34px;
+        border: 6px solid rgba(255, 255, 255, 0.75);
+      }
+      body.theme-cocoa #app-shell {
+        border-color: rgba(255, 255, 255, 0.14);
+      }
+    }
+
+    .card-surface {
+      background-color: var(--bg-card);
+      border: 2px solid var(--border-soft);
+      transition: all 0.25s ease;
+    }
+
+    .soft-surface {
+      background-color: var(--bg-soft);
+    }
+
+    .btn-candy {
+      background: linear-gradient(180deg, var(--accent) 0%, var(--accent-dark) 100%);
+      color: #FFFFFF;
+      box-shadow: 0 5px 0 rgba(0, 0, 0, 0.16);
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+    }
+    .btn-candy:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.16);
+    }
+
+    .btn-gold {
+      background: linear-gradient(180deg, #FFD166 0%, #F79D00 100%);
+      color: #4A2C2A;
+      box-shadow: 0 5px 0 #C77800;
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+    }
+    .btn-gold:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 #C77800;
+    }
+
+    /* Aura Koki Legendaris */
+    @keyframes legendaryPulse {
+      0%, 100% { box-shadow: 0 0 0 3px #FFD166, 0 0 18px rgba(255, 183, 3, 0.75); }
+      50% { box-shadow: 0 0 0 5px #FFF3B0, 0 0 28px rgba(255, 183, 3, 0.95); }
+    }
+    .legendary-aura {
+      animation: legendaryPulse 2.2s infinite ease-in-out;
+    }
+
+    @keyframes floatBob {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+    }
+    .animate-bob {
+      animation: floatBob 2.6s infinite ease-in-out;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.75); opacity: 0; }
+      70% { transform: scale(1.06); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .animate-pop {
+      animation: popIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    /* Animasi Jatuh Loyang pada Mode Bongkar Baut */
+    @keyframes panDrop {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(260px) rotate(16deg); opacity: 0; }
+    }
+    .pan-falling {
+      animation: panDrop 0.65s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+      pointer-events: none;
+    }
+
+    /* Custom Scrollbar halus */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(140, 98, 94, 0.3);
+      border-radius: 99px;
+    }
+
+    /* Grid 10x10 */
+    .grid-10x10 {
+      display: grid;
+      grid-template-columns: repeat(10, minmax(0, 1fr));
+      grid-template-rows: repeat(10, minmax(0, 1fr));
+      gap: 2px;
+    }
+
+    /* Custom Range Slider untuk Pengaturan Volume */
+    input[type="range"].cafe-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--border-soft);
+      outline: none;
+    }
+    input[type="range"].cafe-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 3px solid #FFFFFF;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.22);
+      cursor: pointer;
+    }
+    input[type="range"].cafe-slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 3px solid #FFFFFF;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.22);
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div id="app-shell">
+  <!-- TOP HEADER BAR -->
+  <header class="px-4 pt-3 pb-2 flex items-center justify-between z-20 shrink-0">
+    <!-- Profil Koki Mini -->
+    <button onclick="navigateTo('chef')" class="flex items-center gap-2.5 card-surface rounded-full pr-3 pl-1.5 py-1 shadow-sm active:scale-95 transition">
+      <div id="header-avatar-ring" class="w-9 h-9 rounded-full flex items-center justify-center text-xl bg-amber-100 relative">
+        <span id="header-avatar-emoji">👩‍🍳</span>
+        <span id="header-legendary-badge" class="hidden absolute -bottom-1 -right-1 text-xs bg-amber-400 text-amber-950 rounded-full px-1 font-bold shadow">👑</span>
+      </div>
+      <div class="text-left leading-tight">
+        <div id="header-chef-title" class="text-xs font-extrabold tracking-tight">Koki Pemula</div>
+        <div id="header-undo-pill" class="text-[10px] font-bold text-amber-600 flex items-center gap-1">
+          <span>↩️ <span id="header-total-undo">2</span> Undo</span>
+        </div>
+      </div>
+    </button>
+
+    <!-- Saldo Belimbing & Tombol Settings -->
+    <div class="flex items-center gap-1.5">
+      <button id="btn-account-status" onclick="openAccountModal()" title="Akun & Sinkronisasi Cloud" class="card-surface rounded-full px-2.5 py-1.5 flex items-center gap-1 text-[11px] font-extrabold shadow-sm active:scale-95 transition">
+        <span id="header-sync-icon">👤</span>
+        <span id="header-account-label" class="max-w-[62px] truncate">Tamu</span>
+      </button>
+      <div class="card-surface rounded-full px-2.5 py-1.5 flex items-center gap-1 shadow-sm">
+        <span class="text-sm leading-none">🌟</span>
+        <span id="starfruit-balance" class="font-display font-bold text-xs">60</span>
+      </div>
+      <button id="btn-settings-open" onclick="openSettingsModal()" title="Pengaturan / Settings" class="card-surface w-8 h-8 rounded-full flex items-center justify-center text-sm shadow-sm active:scale-90 transition">
+        ⚙️
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN VIEWPORT AREA -->
+  <main id="main-content" class="flex-1 overflow-y-auto px-4 pb-20 pt-1 relative">
+    <!-- Konten dirender dinamis via JS -->
+  </main>
+
+  <!-- BOTTOM NAVIGATION BAR -->
+  <nav id="bottom-nav" class="card-surface border-t-2 border-x-0 border-b-0 px-2 py-2 flex items-center justify-around z-20 shrink-0 rounded-t-3xl shadow-lg">
+    <button onclick="navigateTo('home')" data-nav="home" class="nav-btn flex flex-col items-center justify-center py-1 px-3 rounded-2xl transition">
+      <span class="text-xl">🏠</span>
+      <span id="nav-label-home" class="text-[11px] font-bold mt-0.5">Kafe</span>
+    </button>
+    <button onclick="navigateTo('shop')" data-nav="shop" class="nav-btn flex flex-col items-center justify-center py-1 px-3 rounded-2xl transition">
+      <span class="text-xl">🛍️</span>
+      <span id="nav-label-shop" class="text-[11px] font-bold mt-0.5">Shop</span>
+    </button>
+    <button onclick="navigateTo('cards')" data-nav="cards" class="nav-btn flex flex-col items-center justify-center py-1 px-3 rounded-2xl transition relative">
+      <span class="text-xl">🃏</span>
+      <span id="nav-label-cards" class="text-[11px] font-bold mt-0.5">Kartu</span>
+      <span id="nav-card-badge" class="hidden absolute top-0.5 right-2 w-2.5 h-2.5 bg-rose-500 rounded-full"></span>
+    </button>
+    <button onclick="navigateTo('chef')" data-nav="chef" class="nav-btn flex flex-col items-center justify-center py-1 px-3 rounded-2xl transition">
+      <span class="text-xl">👨‍🍳</span>
+      <span id="nav-label-chef" class="text-[11px] font-bold mt-0.5">Koki</span>
+    </button>
+  </nav>
+
+  <!-- OVERLAY MODAL / TOAST CONTAINER -->
+  <div id="modal-backdrop" class="hidden fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div id="modal-box" class="card-surface w-full max-w-[380px] rounded-3xl p-5 shadow-2xl animate-pop text-center relative">
+      <!-- Isi Modal Dinamis -->
+    </div>
+  </div>
+
+  <!-- FLOATING TOAST NOTIFICATION -->
+  <div id="toast-container" class="pointer-events-none fixed top-16 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 w-full max-w-[360px] px-4"></div>
+</div>
+
+<!-- FIREBASE AUTH & CLOUD FIRESTORE INTEGRATION (MODULAR SDK 11.6.1) -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+  import {
+    getAuth,
+    signInAnonymously,
+    signInWithCustomToken,
+    onAuthStateChanged,
+    GoogleAuthProvider,
+    signInWithPopup,
+    linkWithPopup,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    EmailAuthProvider,
+    linkWithCredential,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+  import {
+    getFirestore,
+    doc,
+    getDoc,
+    setDoc,
+    onSnapshot
+  } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+  const CloudSaveBridge = {
+    enabled: false,
+    app: null,
+    auth: null,
+    db: null,
+    appId: 'starfruit-bakery-default',
+    currentUser: null,
+    syncStatus: 'local', // 'local' | 'syncing' | 'synced' | 'error'
+    unsubscribeDoc: null,
+    isApplyingRemote: false,
+
+    async init() {
+      try {
+        const rawConfig = typeof __firebase_config !== 'undefined' ? __firebase_config : null;
+        if (!rawConfig) {
+          this.syncStatus = 'local';
+          if (typeof window.onCloudAuthUpdated === 'function') window.onCloudAuthUpdated();
+          return;
+        }
+        const firebaseConfig = typeof rawConfig === 'string' ? JSON.parse(rawConfig) : rawConfig;
+        this.appId = typeof __app_id !== 'undefined' ? __app_id : 'starfruit-bakery-default';
+        this.app = initializeApp(firebaseConfig);
+        this.auth = getAuth(this.app);
+        this.db = getFirestore(this.app);
+        this.enabled = true;
+
+        // Prioritaskan custom token environment sebelum fallback anonymous
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          await signInWithCustomToken(this.auth, __initial_auth_token);
+        } else if (!this.auth.currentUser) {
+          await signInAnonymously(this.auth);
+        }
+
+        onAuthStateChanged(this.auth, (user) => {
+          this.currentUser = user;
+          if (user) {
+            this.attachCloudListener(user.uid);
+          } else {
+            if (this.unsubscribeDoc) {
+              this.unsubscribeDoc();
+              this.unsubscribeDoc = null;
+            }
+            this.syncStatus = 'local';
+          }
+          if (typeof window.onCloudAuthUpdated === 'function') window.onCloudAuthUpdated();
+        });
+      } catch (err) {
+        this.syncStatus = 'local';
+        if (typeof window.onCloudAuthUpdated === 'function') window.onCloudAuthUpdated();
+      }
+    },
+
+    getUserDocRef(uid) {
+      return doc(this.db, 'artifacts', this.appId, 'users', uid, 'bakery_save', 'main_profile');
+    },
+
+    attachCloudListener(uid) {
+      if (!this.enabled || !this.db || !uid) return;
+      if (this.unsubscribeDoc) this.unsubscribeDoc();
+
+      const ref = this.getUserDocRef(uid);
+      this.unsubscribeDoc = onSnapshot(ref, (snap) => {
+        if (snap.exists() && typeof window.applyCloudSnapshot === 'function') {
+          const data = snap.data();
+          this.isApplyingRemote = true;
+          window.applyCloudSnapshot(data);
+          this.isApplyingRemote = false;
+        } else if (!snap.exists() && typeof window.getExportableState === 'function') {
+          this.saveStateToCloud(window.getExportableState());
+        }
+        this.syncStatus = 'synced';
+        if (typeof window.onCloudAuthUpdated === 'function') window.onCloudAuthUpdated();
+      }, () => {
+        this.syncStatus = 'error';
+        if (typeof window.onCloudAuthUpdated === 'function') window.onCloudAuthUpdated();
+      });
+    },
+
+    async saveStateToCloud(stateObj) {
+      if (!this.enabled || !this.db || !this.currentUser || this.isApplyingRemote) return;
+      try {
+        this.syncStatus = 'syncing';
+        if (typeof window.onCloudAuthUpdated === 'function') window.onCloudAuthUpdated();
+        const ref = this.getUserDocRef(this.currentUser.uid);
+        await setDoc(ref, {
+          ...stateObj,
+          updatedAt: Date.now()
+        }, { merge: true });
+        this.syncStatus = 'synced';
+        if (typeof window.onCloudAuthUpdated === 'function') window.onCloudAuthUpdated();
+      } catch (err) {
+        this.syncStatus = 'error';
+        if (typeof window.onCloudAuthUpdated === 'function') window.onCloudAuthUpdated();
+      }
+    },
+
+    async signInGoogle() {
+      if (!this.enabled || !this.auth) {
+        throw new Error('CLOUD_UNAVAILABLE');
+      }
+      const provider = new GoogleAuthProvider();
+      const user = this.auth.currentUser;
+      if (user && user.isAnonymous) {
+        try {
+          const res = await linkWithPopup(user, provider);
+          this.currentUser = res.user;
+          await this.saveStateToCloud(window.getExportableState());
+          return res.user;
+        } catch (err) {
+          if (err.code === 'auth/credential-already-in-use') {
+            const res = await signInWithPopup(this.auth, provider);
+            this.currentUser = res.user;
+            return res.user;
+          }
+          throw err;
+        }
+      } else {
+        const res = await signInWithPopup(this.auth, provider);
+        this.currentUser = res.user;
+        return res.user;
+      }
+    },
+
+    async signInOrRegisterEmail(email, password, isRegister = false) {
+      if (!this.enabled || !this.auth) {
+        throw new Error('CLOUD_UNAVAILABLE');
+      }
+      const user = this.auth.currentUser;
+      if (isRegister) {
+        if (user && user.isAnonymous) {
+          const cred = EmailAuthProvider.credential(email, password);
+          const res = await linkWithCredential(user, cred);
+          this.currentUser = res.user;
+          await this.saveStateToCloud(window.getExportableState());
+          return res.user;
+        }
+        const res = await createUserWithEmailAndPassword(this.auth, email, password);
+        this.currentUser = res.user;
+        await this.saveStateToCloud(window.getExportableState());
+        return res.user;
+      } else {
+        const res = await signInWithEmailAndPassword(this.auth, email, password);
+        this.currentUser = res.user;
+        return res.user;
+      }
+    },
+
+    async logoutToGuest() {
+      if (!this.enabled || !this.auth) return;
+      await signOut(this.auth);
+      await signInAnonymously(this.auth);
+    }
+  };
+
+  window.CloudSaveBridge = CloudSaveBridge;
+  CloudSaveBridge.init();
+</script>
+
+<script>
+/**
+ * ============================================================================
+ * 0. KAMUS BAHASA (BAHASA INDONESIA & ENGLISH)
+ * ============================================================================
+ */
+const I18N = {
+  id: {
+    navHome: 'Kafe',
+    navShop: 'Shop',
+    navCards: 'Kartu',
+    navChef: 'Koki',
+    chefLegendary: 'Koki Legendaris',
+    chefSweet: 'Koki Manis',
+    chefSkilled: 'Koki Handal',
+    cafeTag: '✨ Toko Kue & Kafe Kasual',
+    cafeSubtitle: 'Selesaikan pesanan kue & panen <b>5–8 🌟 Belimbing</b> tiap main!',
+    legendaryActive: '👑 Skill Koki Legendaris Aktif',
+    dailyFreeUndo: 'Undo Gratis Hari Ini',
+    collectHint: 'Kumpulkan 10 kartu Set Legendaris untuk <b>3x Undo Gratis/hari</b>!',
+    viewCards: 'Lihat Kartu',
+    chooseMode: 'Pilih Mode Permainan',
+    mode1Title: '1. Sortir Kue',
+    mode1Desc: 'Kelompokkan potongan kue ke piring sesuai jenis & topping manisnya.',
+    mode2Title: '2. Blok Puzzle Kue 10x10',
+    mode2Desc: 'Susun blok kue di loyang 10x10 hingga penuh sebaris. Ada opsi Lanjut (35 🌟) jika stuck!',
+    mode3Title: '3. Bongkar Loyang Kue',
+    mode3Desc: 'Lepas baut pin kue di loyang kayu & besi dengan urutan tepat sampai semua jatuh!',
+    record: 'Rekor',
+    cardCollectionTitle: 'Koleksi Kartu Resep Kue',
+    cardsCollected: 'Kartu Terkumpul',
+    openPackBtn: 'Buka Pack',
+    shopTitle: 'Toko Perlengkapan Kafe',
+    shopSubtitle: 'Tukarkan 🌟 Belimbing hasil bermainmu!',
+    balance: 'Saldo',
+    yourUndo: 'Undo Milikmu',
+    tickets: 'Tiket',
+    pieces: 'Buah',
+    chefBooster: 'Booster Koki',
+    freeUndoDay: 'Undo Gratis/Hari',
+    utilityItems: 'Item Bantuan Permainan',
+    reviveShopNote: '*Info: Opsi <b>Lanjut / Revive (35 🌟)</b> otomatis muncul saat kamu kehabisan langkah di Blok Puzzle 10x10.',
+    decorSection: 'Dekorasi Kafe & Bingkai Profil',
+    equipped: 'Dipakai',
+    equip: 'Pakai',
+    albumCollection: 'Album Koleksi',
+    gachaTitle: 'Gacha Kartu Resep Kue',
+    gachaSubtitle: 'Kumpulkan semua 10 kartu di Set 5 untuk membuka <b>Koki Legendaris</b>!',
+    open1Pack: '🎁 Buka 1 Pack (3 Kartu)',
+    rewardLabel: 'Hadiah',
+    locked: 'Terkunci',
+    claimSetBtn: '🎉 Klaim Hadiah Set Lengkap!',
+    claimedSetDone: '✅ Hadiah Set Sudah Diklaim',
+    cardLockedTitle: 'Kartu Belum Terbuka',
+    cardUnlockedDesc: 'Kartu resep ini sudah tersimpan rapi di album kafe milikmu!',
+    cardLockedDesc: 'Buka Pack Kartu Gacha untuk mendapatkan kartu acak ini.',
+    close: 'Tutup',
+    packOpened: '✨ Pack Terbuka! ✨',
+    got3Cards: 'Kamu Mendapatkan 3 Kartu',
+    newBadge: 'BARU!',
+    saveToAlbum: 'Simpan ke Album',
+    congratsSet: 'Selamat! Set 10/10 Lengkap',
+    legendaryUnlockedTitle: 'Koki Legendaris Terbuka!',
+    legendaryUnlockedDesc: 'Kamu membuka avatar <b>Koki Legendaris (Cewek & Cowok)</b> beserta aura emas spesial dan skill pasif:',
+    legendarySkillBox: '✨ 3x UNDO GRATIS SETIAP HARI ✨<br/><span class="font-semibold text-[11px] opacity-80">(Berlaku di Sortir Kue, Blok 10x10 & Bongkar Loyang)</span>',
+    chooseLegendaryAvatar: 'Pilih Avatar Koki Legendaris',
+    chefTagLegendary: '👑 KOKI LEGENDARIS',
+    chefTagNormal: 'Koki Toko Kue',
+    chooseChefTitle: 'Pilih Karakter Koki Kamu',
+    chooseChefDesc: 'Bebas ganti koki cewek atau cowok kapan saja!',
+    femaleChef: 'Koki Cewek',
+    maleChef: 'Koki Cowok',
+    activeDot: '● Aktif',
+    legendarySkillHeader: 'Skill Spesial Koki Legendaris',
+    legendaryActiveDesc: 'Skill pasif sudah aktif! Kamu mendapat <b>3x Undo Gratis</b> setiap hari yang otomatis terisi ulang besok.',
+    remainingFreeUndoToday: 'Sisa Undo Gratis Hari Ini:',
+    legendaryLockedDesc: 'Status: <b>Belum Terbuka</b>. Kumpulkan semua 10 kartu pada <i>Set 5: Mahakarya Koki Legendaris</i> untuk membuka kemampuan <b>3x Undo Gratis Harian</b>.',
+    goToCards: 'Ke Koleksi Kartu',
+    resetProgressLink: 'Reset Data Permainan ke Awal',
+    resetConfirmTitle: 'Reset Progres Game?',
+    resetConfirmDesc: 'Belimbing kembali ke 60 🌟 dan koleksi kartu akan diulang dari awal.',
+    cancel: 'Batal',
+    yesReset: 'Ya, Reset',
+    backCafe: '← Kafe',
+    sortTitle: '🍰 Sortir Kue',
+    sortInstruction: 'Susun 4 kue sejenis di 1 piring!',
+    addPlateBooster: '🪄 +1 Piring',
+    sortWinTitle: 'Pesanan Kue Selesai!',
+    sortWinDesc: 'Semua kue berhasil disortir dengan rapi.',
+    toCafe: 'Ke Kafe',
+    nextLevel: 'Level Berikutnya ▶',
+    block10Title: '🧇 Blok Kue 10x10',
+    scoreLabel: 'Skor',
+    targetLabel: 'Target',
+    finishBtn: 'Selesai',
+    block10Instruction: '1. Pilih potongan blok di bawah → 2. Ketuk kotak di loyang 10x10',
+    placedLabel: 'Terpasang',
+    clear3x3Booster: '🪄 Hapus 3x3',
+    stuckTag: 'Loyang Penuh / Stuck!',
+    stuckTitle: 'Tidak Ada Jalan Tersisa',
+    stuckDesc: 'Mau bersihkan area tengah loyang & lanjut bermain?',
+    reviveBtn: '✨ Lanjut Main (Revive)',
+    noFinishBtn: 'Tidak, Selesaikan Permainan',
+    blockEndTitle: 'Sesi Blok Kue Selesai!',
+    finalScore: 'Skor Akhir',
+    playAgain: 'Main Lagi ▶',
+    unscrewTitle: '🔩 Bongkar Loyang',
+    unscrewInstruction: 'Lepas baut bebas agar loyang jatuh!',
+    sparePinBox: 'Kotak Pin Sementara (2 pin kue kembar otomatis dikemas!)',
+    remove1BoltBooster: '🪄 Lepas 1 Baut',
+    unscrewWinTitle: 'Semua Loyang Terbongkar!',
+    unscrewWinDesc: 'Urutan lepas bautmu rapi dan presisi!',
+    settingsTitle: '⚙️ Pengaturan Kafe',
+    languageLabel: 'Bahasa / Language',
+    sfxLabel: 'Efek Suara (SFX)',
+    sfxDesc: 'Suara kue, lonceng kasir, baut & Belimbing',
+    soundLabel: 'Musik Latar (Sound / BGM)',
+    soundDesc: 'Alunan piano & marimba santai ala kafe',
+    volumeLabel: 'Volume',
+    testSfxBtn: '🔔 Tes SFX',
+    doneBtn: 'Simpan & Tutup',
+    guestLabel: 'Tamu',
+    cloudSynced: 'Tersimpan di Cloud',
+    cloudSyncing: 'Menyimpan...',
+    localOnlyStatus: 'Mode Tamu (Lokal)',
+    accountModalTitle: '☁️ Akun & Simpan Progres',
+    guestWarningTitle: 'Kamu sedang bermain di Mode Tamu',
+    guestWarningDesc: 'Progres Belimbing, kartu, dan level saat ini tersimpan di perangkat ini. Tautkan ke akun Google atau Email agar progresmu aman dan tidak hilang!',
+    googleLoginBtn: 'Lanjutkan dengan Google',
+    emailTabLogin: 'Masuk Email',
+    emailTabRegister: 'Daftar & Tautkan',
+    emailPlaceholder: 'emailkoki@contoh.com',
+    passPlaceholder: 'Kata sandi (min. 6 karakter)',
+    submitLoginBtn: 'Masuk & Muat Progres',
+    submitRegisterBtn: 'Daftar & Simpan Progres Saat Ini',
+    loggedInAs: 'Masuk sebagai Koki Terdaftar',
+    uidLabel: 'ID Pemain:',
+    syncNowBtn: '☁️ Sinkronkan Sekarang',
+    logoutBtn: 'Keluar ke Mode Tamu',
+    accountSettingsCardTitle: 'Akun & Simpan Cloud',
+    manageAccountBtn: 'Kelola Akun'
+  },
+  en: {
+    navHome: 'Cafe',
+    navShop: 'Shop',
+    navCards: 'Cards',
+    navChef: 'Chef',
+    chefLegendary: 'Legendary Chef',
+    chefSweet: 'Sweet Chef',
+    chefSkilled: 'Master Baker',
+    cafeTag: '✨ Cozy Bakery & Cafe Puzzle',
+    cafeSubtitle: 'Complete cake orders & earn <b>5–8 🌟 Starfruit</b> every game!',
+    legendaryActive: '👑 Legendary Chef Skill Active',
+    dailyFreeUndo: 'Free Undos Today',
+    collectHint: 'Collect all 10 Legendary Set cards for <b>3x Free Undos/day</b>!',
+    viewCards: 'View Cards',
+    chooseMode: 'Choose Game Mode',
+    mode1Title: '1. Cake Sort',
+    mode1Desc: 'Group cake slices onto plates by matching flavor & sweet toppings.',
+    mode2Title: '2. 10x10 Cake Block Puzzle',
+    mode2Desc: 'Fit cake blocks on the 10x10 tray to clear lines. Offers Continue (35 🌟) if stuck!',
+    mode3Title: '3. Cake Pan Unscrew',
+    mode3Desc: 'Unscrew colorful cake pins from wood & metal pans in the right order!',
+    record: 'Best',
+    cardCollectionTitle: 'Cake Recipe Card Album',
+    cardsCollected: 'Cards Collected',
+    openPackBtn: 'Open Pack',
+    shopTitle: 'Bakery Supply Shop',
+    shopSubtitle: 'Spend your hard-earned 🌟 Starfruit!',
+    balance: 'Balance',
+    yourUndo: 'Your Undos',
+    tickets: 'Tickets',
+    pieces: 'Items',
+    chefBooster: 'Chef Booster',
+    freeUndoDay: 'Free Undo/Day',
+    utilityItems: 'Gameplay Utility Items',
+    reviveShopNote: '*Note: <b>Continue / Revive (35 🌟)</b> pops up automatically when you run out of moves in 10x10 Block Puzzle.',
+    decorSection: 'Cafe Decor & Profile Frames',
+    equipped: 'Equipped',
+    equip: 'Equip',
+    albumCollection: 'Card Album',
+    gachaTitle: 'Recipe Card Gacha',
+    gachaSubtitle: 'Complete all 10 cards in Set 5 to unlock the <b>Legendary Chef</b>!',
+    open1Pack: '🎁 Open 1 Pack (3 Cards)',
+    rewardLabel: 'Reward',
+    locked: 'Locked',
+    claimSetBtn: '🎉 Claim Full Set Reward!',
+    claimedSetDone: '✅ Set Reward Claimed',
+    cardLockedTitle: 'Card Locked',
+    cardUnlockedDesc: 'This recipe card is safely stored in your bakery album!',
+    cardLockedDesc: 'Open Gacha Card Packs to discover this random recipe card.',
+    close: 'Close',
+    packOpened: '✨ Pack Opened! ✨',
+    got3Cards: 'You Got 3 Recipe Cards',
+    newBadge: 'NEW!',
+    saveToAlbum: 'Save to Album',
+    congratsSet: 'Congrats! 10/10 Set Complete',
+    legendaryUnlockedTitle: 'Legendary Chef Unlocked!',
+    legendaryUnlockedDesc: 'You unlocked both <b>Legendary Chef Avatars (Female & Male)</b> with a golden aura and passive skill:',
+    legendarySkillBox: '✨ 3x FREE UNDOS EVERY DAY ✨<br/><span class="font-semibold text-[11px] opacity-80">(Works in Cake Sort, 10x10 Blocks & Pan Unscrew)</span>',
+    chooseLegendaryAvatar: 'Choose Legendary Chef Avatar',
+    chefTagLegendary: '👑 LEGENDARY CHEF',
+    chefTagNormal: 'Bakery Chef',
+    chooseChefTitle: 'Choose Your Chef Character',
+    chooseChefDesc: 'Switch between female or male chef anytime!',
+    femaleChef: 'Female Chef',
+    maleChef: 'Male Chef',
+    activeDot: '● Active',
+    legendarySkillHeader: 'Legendary Chef Special Skill',
+    legendaryActiveDesc: 'Passive skill active! You get <b>3x Free Undos</b> every day, automatically refreshed tomorrow.',
+    remainingFreeUndoToday: 'Remaining Free Undos Today:',
+    legendaryLockedDesc: 'Status: <b>Locked</b>. Collect all 10 cards in <i>Set 5: Legendary Chef Masterpieces</i> to unlock <b>3x Daily Free Undos</b>.',
+    goToCards: 'Go to Card Album',
+    resetProgressLink: 'Reset Game Progress to Default',
+    resetConfirmTitle: 'Reset Game Progress?',
+    resetConfirmDesc: 'Starfruit resets to 60 🌟 and card collection will start over.',
+    cancel: 'Cancel',
+    yesReset: 'Yes, Reset',
+    backCafe: '← Cafe',
+    sortTitle: '🍰 Cake Sort',
+    sortInstruction: 'Stack 4 matching cakes on 1 plate!',
+    addPlateBooster: '🪄 +1 Plate',
+    sortWinTitle: 'Cake Order Complete!',
+    sortWinDesc: 'All cake slices have been neatly sorted.',
+    toCafe: 'To Cafe',
+    nextLevel: 'Next Level ▶',
+    block10Title: '🧇 10x10 Cake Blocks',
+    scoreLabel: 'Score',
+    targetLabel: 'Goal',
+    finishBtn: 'Finish',
+    block10Instruction: '1. Pick a block below → 2. Tap a cell on the 10x10 tray',
+    placedLabel: 'Placed',
+    clear3x3Booster: '🪄 Clear 4x4',
+    stuckTag: 'Tray Full / Stuck!',
+    stuckTitle: 'No Moves Remaining',
+    stuckDesc: 'Clear the center of the tray & keep playing?',
+    reviveBtn: '✨ Continue Playing (Revive)',
+    noFinishBtn: 'No, End Run',
+    blockEndTitle: 'Cake Block Run Complete!',
+    finalScore: 'Final Score',
+    playAgain: 'Play Again ▶',
+    unscrewTitle: '🔩 Pan Unscrew',
+    unscrewInstruction: 'Unscrew free pins so pans drop!',
+    sparePinBox: 'Spare Pin Box (2 matching cake pins pack automatically!)',
+    remove1BoltBooster: '🪄 Pop 1 Pin',
+    unscrewWinTitle: 'All Pans Unscrewed!',
+    unscrewWinDesc: 'Clean and precise unscrewing order!',
+    settingsTitle: '⚙️ Cafe Settings',
+    languageLabel: 'Bahasa / Language',
+    sfxLabel: 'Sound Effects (SFX)',
+    sfxDesc: 'Cake pops, cafe bell dings, bolts & Starfruit',
+    soundLabel: 'Background Music (Sound / BGM)',
+    soundDesc: 'Cozy cafe piano & marimba lounge loop',
+    volumeLabel: 'Volume',
+    testSfxBtn: '🔔 Test SFX',
+    doneBtn: 'Save & Close',
+    guestLabel: 'Guest',
+    cloudSynced: 'Saved to Cloud',
+    cloudSyncing: 'Syncing...',
+    localOnlyStatus: 'Guest Mode (Local)',
+    accountModalTitle: '☁️ Account & Cloud Save',
+    guestWarningTitle: 'You are playing in Guest Mode',
+    guestWarningDesc: 'Your Starfruit, cards, and levels are saved on this device. Link a Google or Email account anytime so you never lose your progress!',
+    googleLoginBtn: 'Continue with Google',
+    emailTabLogin: 'Email Sign In',
+    emailTabRegister: 'Register & Link',
+    emailPlaceholder: 'baker@example.com',
+    passPlaceholder: 'Password (min. 6 chars)',
+    submitLoginBtn: 'Sign In & Load Progress',
+    submitRegisterBtn: 'Register & Link Current Progress',
+    loggedInAs: 'Signed in as Registered Chef',
+    uidLabel: 'Player ID:',
+    syncNowBtn: '☁️ Sync Now',
+    logoutBtn: 'Log Out to Guest Mode',
+    accountSettingsCardTitle: 'Account & Cloud Save',
+    manageAccountBtn: 'Manage Account'
+  }
+};
+
+function t(key) {
+  const lang = (typeof gameState !== 'undefined' && gameState.language) ? gameState.language : 'id';
+  return (I18N[lang] && I18N[lang][key]) || I18N.id[key] || key;
+}
+
+/**
+ * ============================================================================
+ * 1. WEB AUDIO API - CUTE CAFE SFX & AMBIENT MARIMBA SYNTHESIZER
+ *    (DENGAN KONTROL ON/OFF & SLIDER VOLUME TERPISAH UNTUK SFX DAN SOUND/BGM)
+ * ============================================================================
+ */
+const CafeAudio = (() => {
+  let ctx = null;
+  let sfxEnabled = true;
+  let sfxVolume = 0.8;   // 0.0 - 1.0
+  let bgmEnabled = true;
+  let bgmVolume = 0.55;  // 0.0 - 1.0
+  let bgmInterval = null;
+  let bgmStep = 0;
+
+  function ensureContext() {
+    if (!ctx) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      ctx = new AudioCtx();
+    }
+    if (ctx.state === 'suspended') {
+      ctx.resume();
+    }
+  }
+
+  function playTone(freq, type = 'sine', duration = 0.15, baseVolume = 0.18, delay = 0, slideTo = null, channel = 'sfx') {
+    if (channel === 'sfx' && (!sfxEnabled || sfxVolume <= 0)) return;
+    if (channel === 'bgm' && (!bgmEnabled || bgmVolume <= 0)) return;
+
+    const scale = channel === 'sfx' ? sfxVolume : bgmVolume;
+    const finalVol = Math.max(0.0005, baseVolume * scale);
+
+    try {
+      ensureContext();
+      const now = ctx.currentTime + delay;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, now);
+      if (slideTo) {
+        osc.frequency.exponentialRampToValueAtTime(slideTo, now + duration);
+      }
+      gain.gain.setValueAtTime(0.0005, now);
+      gain.gain.linearRampToValueAtTime(finalVol, now + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0004, now + duration);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + duration + 0.02);
+    } catch (e) {}
+  }
+
+  // Mulai BGM Bossa-Nova / Marimba Kafe lembut saat interaksi pertama
+  function startAmbientBgm() {
+    if (bgmInterval) return;
+    const notes = [349.23, 440.00, 523.25, 659.25, 329.63, 392.00, 493.88, 587.33, 293.66, 349.23, 440.00, 523.25, 261.63, 329.63, 392.00, 493.88];
+    bgmInterval = setInterval(() => {
+      if (!bgmEnabled || bgmVolume <= 0 || !ctx || ctx.state !== 'running') return;
+      const note = notes[bgmStep % notes.length];
+      playTone(note, 'sine', 0.35, 0.06, 0, null, 'bgm');
+      if (bgmStep % 4 === 0) {
+        playTone(note / 2, 'triangle', 0.45, 0.05, 0, null, 'bgm');
+      }
+      bgmStep++;
+    }, 520);
+  }
+
+  return {
+    initOnGesture() {
+      ensureContext();
+      startAmbientBgm();
+    },
+    syncSettings(settings) {
+      sfxEnabled = settings.sfxEnabled;
+      sfxVolume = settings.sfxVolume;
+      bgmEnabled = settings.bgmEnabled;
+      bgmVolume = settings.bgmVolume;
+    },
+    tap() {
+      playTone(580, 'sine', 0.08, 0.14, 0, 740, 'sfx');
+    },
+    cakePlop() {
+      playTone(320, 'sine', 0.14, 0.24, 0, 520, 'sfx');
+      playTone(640, 'triangle', 0.07, 0.09, 0.05, null, 'sfx');
+    },
+    cafeBell() {
+      playTone(1046.5, 'sine', 0.45, 0.24, 0, null, 'sfx');
+      playTone(1567.98, 'sine', 0.55, 0.15, 0.04, null, 'sfx');
+    },
+    biscuitPlace() {
+      playTone(420, 'triangle', 0.09, 0.22, 0, 260, 'sfx');
+      playTone(840, 'sine', 0.06, 0.11, 0.02, null, 'sfx');
+    },
+    sugarClear(combo = 1) {
+      const base = 523.25 * (1 + (combo - 1) * 0.12);
+      playTone(base, 'sine', 0.18, 0.22, 0, null, 'sfx');
+      playTone(base * 1.25, 'sine', 0.2, 0.22, 0.07, null, 'sfx');
+      playTone(base * 1.5, 'sine', 0.28, 0.24, 0.14, null, 'sfx');
+    },
+    unscrewPop() {
+      playTone(480, 'square', 0.05, 0.09, 0, 620, 'sfx');
+      playTone(580, 'square', 0.05, 0.09, 0.06, 760, 'sfx');
+      playTone(880, 'sine', 0.14, 0.22, 0.12, 1180, 'sfx');
+    },
+    panDrop() {
+      playTone(210, 'triangle', 0.16, 0.26, 0, 110, 'sfx');
+      playTone(330, 'sine', 0.1, 0.14, 0.06, 180, 'sfx');
+    },
+    starfruitChime() {
+      playTone(783.99, 'sine', 0.16, 0.22, 0, null, 'sfx');
+      playTone(1046.5, 'sine', 0.22, 0.24, 0.08, null, 'sfx');
+      playTone(1318.5, 'sine', 0.35, 0.22, 0.16, null, 'sfx');
+    },
+    legendaryFanfare() {
+      const seq = [523.25, 659.25, 783.99, 1046.5];
+      seq.forEach((f, idx) => {
+        playTone(f, 'triangle', 0.24, 0.22, idx * 0.09, null, 'sfx');
+      });
+    },
+    oops() {
+      playTone(330, 'sawtooth', 0.18, 0.11, 0, 240, 'sfx');
+      playTone(240, 'sawtooth', 0.25, 0.11, 0.16, 170, 'sfx');
+    }
+  };
+})();
+
+/**
+ * ============================================================================
+ * 2. DATA KUE (COLORBLIND-FRIENDLY: WARNA + IKON/TOPPING UNIK) & KOLEKSI KARTU
+ * ============================================================================
+ */
+const CAKE_TYPES = [
+  { id: 'berry',   name: 'Berry Tart',     emoji: '🍓', bg: '#FF758F', border: '#C9184A', text: '#FFF' },
+  { id: 'matcha',  name: 'Matcha Roll',    emoji: '🍃', bg: '#52B788', border: '#1B4332', text: '#FFF' },
+  { id: 'choco',   name: 'Choco Donut',    emoji: '🍩', bg: '#8D5B4C', border: '#4A2C2A', text: '#FFF' },
+  { id: 'lemon',   name: 'Lemon Macaron',  emoji: '🍋', bg: '#FFB703', border: '#B5651D', text: '#3D2200' },
+  { id: 'velvet',  name: 'Velvet Cupcake', emoji: '🧁', bg: '#B565A7', border: '#6A2C70', text: '#FFF' },
+  { id: 'honey',   name: 'Honey Croissant',emoji: '🥐', bg: '#F48C06', border: '#9D4EDD', text: '#FFF' }
+];
+
+// 5 Set Kartu Kue sesuai kesepakatan (Set 5 berisi 10 kartu -> Buka Koki Legendaris!)
+const CARD_SETS = [
+  {
+    id: 'set1',
+    name: 'Set 1: Kue Klasik Toko',
+    badge: '6 Kartu',
+    rewardText: '+15 Belimbing',
+    rewardStarfruit: 15,
+    cards: [
+      { id: 'c1_1', name: 'Bolu Pandan Nenek', emoji: '🍰', rarity: 'Biasa' },
+      { id: 'c1_2', name: 'Donat Gula Salju', emoji: '🍩', rarity: 'Biasa' },
+      { id: 'c1_3', name: 'Kue Sus Vla Vanila', emoji: '🥯', rarity: 'Biasa' },
+      { id: 'c1_4', name: 'Lapis Legit Harum', emoji: '🥞', rarity: 'Langka' },
+      { id: 'c1_5', name: 'Bika Ambon Madu', emoji: '🍯', rarity: 'Langka' },
+      { id: 'c1_6', name: 'Tart Susu Klasik', emoji: '🥧', rarity: 'Spesial' }
+    ]
+  },
+  {
+    id: 'set2',
+    name: 'Set 2: Pastry Perancis',
+    badge: '6 Kartu',
+    rewardText: '+20 Belimbing',
+    rewardStarfruit: 20,
+    cards: [
+      { id: 'c2_1', name: 'Croissant Mentega', emoji: '🥐', rarity: 'Biasa' },
+      { id: 'c2_2', name: 'Macaron Mawar', emoji: '🌸', rarity: 'Biasa' },
+      { id: 'c2_3', name: 'Éclair Cokelat', emoji: '🍫', rarity: 'Biasa' },
+      { id: 'c2_4', name: 'Mille-Feuille Krim', emoji: '🍨', rarity: 'Langka' },
+      { id: 'c2_5', name: 'Canelé Karamel', emoji: '🍮', rarity: 'Langka' },
+      { id: 'c2_6', name: 'Opera Cake Emas', emoji: '✨', rarity: 'Spesial' }
+    ]
+  },
+  {
+    id: 'set3',
+    name: 'Set 3: Segar Buah Tropis',
+    badge: '8 Kartu',
+    rewardText: '+25 Belimbing',
+    rewardStarfruit: 25,
+    cards: [
+      { id: 'c3_1', name: 'Shortcake Stroberi', emoji: '🍓', rarity: 'Biasa' },
+      { id: 'c3_2', name: 'Pai Apel Kayu Manis', emoji: '🍎', rarity: 'Biasa' },
+      { id: 'c3_3', name: 'Cheesecake Blueberry', emoji: '🫐', rarity: 'Biasa' },
+      { id: 'c3_4', name: 'Mousse Mangga Manis', emoji: '🥭', rarity: 'Biasa' },
+      { id: 'c3_5', name: 'Tart Lemon Segar', emoji: '🍋', rarity: 'Langka' },
+      { id: 'c3_6', name: 'Pavlova Kiwi', emoji: '🥝', rarity: 'Langka' },
+      { id: 'c3_7', name: 'Bolu Pisang Karamel', emoji: '🍌', rarity: 'Spesial' },
+      { id: 'c3_8', name: 'Parfait Belimbing', emoji: '🌟', rarity: 'Spesial' }
+    ]
+  },
+  {
+    id: 'set4',
+    name: 'Set 4: Sajian Kafe Sore',
+    badge: '8 Kartu',
+    rewardText: '+30 Belimbing',
+    rewardStarfruit: 30,
+    cards: [
+      { id: 'c4_1', name: 'Tiramisu Espresso', emoji: '☕', rarity: 'Biasa' },
+      { id: 'c4_2', name: 'Matcha Swiss Roll', emoji: '🍵', rarity: 'Biasa' },
+      { id: 'c4_3', name: 'Red Velvet Cupcake', emoji: '🧁', rarity: 'Biasa' },
+      { id: 'c4_4', name: 'Wafel Madu Hangat', emoji: '🧇', rarity: 'Biasa' },
+      { id: 'c4_5', name: 'Cinnamon Roll Gula', emoji: '🌀', rarity: 'Langka' },
+      { id: 'c4_6', name: 'Churros Saus Cokelat', emoji: '🥖', rarity: 'Langka' },
+      { id: 'c4_7', name: 'Soufflé Pancake', emoji: '🥞', rarity: 'Spesial' },
+      { id: 'c4_8', name: 'Affogato Vanila', emoji: '🍨', rarity: 'Spesial' }
+    ]
+  },
+  {
+    id: 'set5',
+    name: 'Set 5: Mahakarya Koki Legendaris',
+    badge: '10 Kartu 👑',
+    rewardText: 'Buka KOKI LEGENDARIS (3x Undo Gratis/Hari!)',
+    rewardStarfruit: 40,
+    isLegendarySet: true,
+    cards: [
+      { id: 'c5_1', name: 'Kue Pernikahan 5 Tingkat', emoji: '🎂', rarity: 'Langka' },
+      { id: 'c5_2', name: 'Croquembouche Karamel', emoji: '🗼', rarity: 'Langka' },
+      { id: 'c5_3', name: 'Tart Belimbing Kristal', emoji: '🌟', rarity: 'Langka' },
+      { id: 'c5_4', name: 'Black Forest Kirschen', emoji: '🍒', rarity: 'Langka' },
+      { id: 'c5_5', name: 'Baked Alaska Api Biru', emoji: '🔥', rarity: 'Spesial' },
+      { id: 'c5_6', name: 'Macaron Pelangi Kerajaan', emoji: '🌈', rarity: 'Spesial' },
+      { id: 'c5_7', name: 'Cokelat Truffle Emas 24K', emoji: '👑', rarity: 'Spesial' },
+      { id: 'c5_8', name: 'Kue Bulan Teratai', emoji: '🥮', rarity: 'Legendaris' },
+      { id: 'c5_9', name: 'Mahkota Gula Tiup', emoji: '💎', rarity: 'Legendaris' },
+      { id: 'c5_10', name: 'Resep Rahasia Master Koki', emoji: '📜', rarity: 'Legendaris' }
+    ]
+  }
+];
+
+const SHOP_ITEMS = {
+  utilities: [
+    { id: 'undo_1', name: 'Tiket Undo (+1)', desc: 'Batalkan 1 langkah salah di mode mana saja.', price: 15, icon: '↩️', type: 'undo', amount: 1 },
+    { id: 'booster_1', name: 'Booster Koki (+1)', desc: 'Bantu bereskan papan saat situasi sulit!', price: 30, icon: '🪄', type: 'booster', amount: 1 }
+  ],
+  cosmetics: [
+    { id: 'theme_pastel', name: 'Kafe Stroberi Pastel', desc: 'Nuansa merah muda manis & hangat.', price: 0, icon: '🍓', type: 'theme', value: 'pastel' },
+    { id: 'theme_matcha', name: 'Taman Matcha Uji', desc: 'Suasana teh hijau segar yang menenangkan.', price: 60, icon: '🍵', type: 'theme', value: 'matcha' },
+    { id: 'theme_cocoa', name: 'Lounge Dark Cocoa', desc: 'Kafe cokelat malam yang elegan & nyaman.', price: 85, icon: '🍫', type: 'theme', value: 'cocoa' },
+    { id: 'frame_cherry', name: 'Bingkai Ceri Manis', desc: 'Hiasan bingkai profil bertema ceri.', price: 50, icon: '🍒', type: 'frame', value: 'cherry' },
+    { id: 'frame_royal', name: 'Bingkai Mahkota Gula', desc: 'Bingkai mewah berkilau untuk koki.', price: 100, icon: '👑', type: 'frame', value: 'royal' }
+  ]
+};
+
+/**
+ * ============================================================================
+ * 3. STATE PERSISTENCE (LOCALSTORAGE) & EKONOMI BELIMBING
+ * ============================================================================
+ */
+const STORAGE_KEY = 'starfruit_bakery_save_v1';
+
+function getTodayString() {
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+}
+
+const defaultState = {
+  starfruit: 60,
+  purchasedUndo: 2,
+  boosterCount: 1,
+  dailyFreeUndoUsed: 0,
+  lastDailyReset: getTodayString(),
+  chefGender: 'female', // 'female' | 'male'
+  legendaryUnlocked: false,
+  activeTheme: 'pastel',
+  activeFrame: 'default',
+  ownedCosmetics: ['theme_pastel', 'default'],
+  unlockedCards: ['c1_1', 'c1_2', 'c5_1'], // Beberapa kartu awal biar seru dilihat
+  claimedSets: [],
+  levelsCompleted: {
+    sort: 1,
+    block10: 1,
+    unscrew: 1
+  },
+  highScore10x10: 0,
+  language: 'id', // 'id' | 'en'
+  audioSettings: {
+    sfxEnabled: true,
+    sfxVolume: 0.8,
+    bgmEnabled: true,
+    bgmVolume: 0.55
+  }
+};
+
+let gameState = loadState();
+CafeAudio.syncSettings(gameState.audioSettings);
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return JSON.parse(JSON.stringify(defaultState));
+    const parsed = { ...JSON.parse(JSON.stringify(defaultState)), ...JSON.parse(raw) };
+    parsed.audioSettings = { ...defaultState.audioSettings, ...(parsed.audioSettings || {}) };
+    // Cek reset harian untuk 3x Undo Gratis Koki Legendaris
+    if (parsed.lastDailyReset !== getTodayString()) {
+      parsed.dailyFreeUndoUsed = 0;
+      parsed.lastDailyReset = getTodayString();
+    }
+    return parsed;
+  } catch (e) {
+    return JSON.parse(JSON.stringify(defaultState));
+  }
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState));
+  } catch (e) {}
+  CafeAudio.syncSettings(gameState.audioSettings);
+  updateHeaderUI();
+  if (window.CloudSaveBridge && window.CloudSaveBridge.enabled) {
+    window.CloudSaveBridge.saveStateToCloud(gameState);
+  }
+}
+
+window.getExportableState = function () {
+  return JSON.parse(JSON.stringify(gameState));
+};
+
+window.applyCloudSnapshot = function (remoteData) {
+  if (!remoteData || typeof remoteData !== 'object') return;
+  const merged = {
+    ...JSON.parse(JSON.stringify(defaultState)),
+    ...gameState,
+    ...remoteData
+  };
+  merged.audioSettings = {
+    ...defaultState.audioSettings,
+    ...(gameState.audioSettings || {}),
+    ...(remoteData.audioSettings || {})
+  };
+  if (merged.lastDailyReset !== getTodayString()) {
+    merged.dailyFreeUndoUsed = 0;
+    merged.lastDailyReset = getTodayString();
+  }
+  gameState = merged;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState));
+  } catch (e) {}
+  CafeAudio.syncSettings(gameState.audioSettings);
+  rerenderActiveRoute();
+};
+
+window.onCloudAuthUpdated = function () {
+  updateHeaderUI();
+};
+
+function getAccountDisplayInfo() {
+  const bridge = window.CloudSaveBridge;
+  const user = bridge && bridge.currentUser ? bridge.currentUser : null;
+  const isRegistered = user && !user.isAnonymous;
+  const displayName = isRegistered
+    ? (user.displayName || (user.email ? user.email.split('@')[0] : 'Chef'))
+    : t('guestLabel');
+  const syncIcon = isRegistered
+    ? (bridge.syncStatus === 'syncing' ? '🔄' : '☁️')
+    : '👤';
+  const statusText = isRegistered
+    ? (bridge.syncStatus === 'syncing' ? t('cloudSyncing') : t('cloudSynced'))
+    : t('localOnlyStatus');
+
+  return { user, isRegistered, displayName, syncIcon, statusText };
+}
+
+function getRemainingDailyFreeUndo() {
+  if (!gameState.legendaryUnlocked) return 0;
+  if (gameState.lastDailyReset !== getTodayString()) {
+    gameState.dailyFreeUndoUsed = 0;
+    gameState.lastDailyReset = getTodayString();
+  }
+  return Math.max(0, 3 - gameState.dailyFreeUndoUsed);
+}
+
+function getTotalAvailableUndo() {
+  return getRemainingDailyFreeUndo() + gameState.purchasedUndo;
+}
+
+function consumeOneUndo() {
+  const freeLeft = getRemainingDailyFreeUndo();
+  if (freeLeft > 0) {
+    gameState.dailyFreeUndoUsed += 1;
+    saveState();
+    showToast('👑 Skill Koki Legendaris: 1x Undo Gratis terpakai!', 'gold');
+    return true;
+  }
+  if (gameState.purchasedUndo > 0) {
+    gameState.purchasedUndo -= 1;
+    saveState();
+    showToast('↩️ Menggunakan 1x Tiket Undo', 'info');
+    return true;
+  }
+  return false;
+}
+
+function rewardLevelStarfruit(modeLabel) {
+  // Setiap permainan selesai dapat 5 - 8 Belimbing
+  const earned = Math.floor(Math.random() * 4) + 5; // 5, 6, 7, atau 8
+  gameState.starfruit += earned;
+  saveState();
+  CafeAudio.starfruitChime();
+  return earned;
+}
+
+/**
+ * ============================================================================
+ * 4. UI HELPERS: TOAST, MODAL, HEADER & THEME SYNC
+ * ============================================================================
+ */
+let currentRoute = 'home';
+
+function applyTheme() {
+  document.body.classList.remove('theme-matcha', 'theme-cocoa');
+  if (gameState.activeTheme === 'matcha') document.body.classList.add('theme-matcha');
+  if (gameState.activeTheme === 'cocoa') document.body.classList.add('theme-cocoa');
+}
+
+function updateHeaderUI() {
+  applyTheme();
+  document.getElementById('starfruit-balance').textContent = gameState.starfruit;
+
+  const avatarEmoji = gameState.chefGender === 'female' ? '👩‍🍳' : '👨‍🍳';
+  document.getElementById('header-avatar-emoji').textContent = avatarEmoji;
+
+  const ring = document.getElementById('header-avatar-ring');
+  const badge = document.getElementById('header-legendary-badge');
+  const title = document.getElementById('header-chef-title');
+
+  ring.classList.remove('legendary-aura', 'ring-2', 'ring-rose-400', 'ring-amber-400');
+  if (gameState.legendaryUnlocked) {
+    ring.classList.add('legendary-aura');
+    badge.classList.remove('hidden');
+    title.textContent = t('chefLegendary');
+  } else {
+    badge.classList.add('hidden');
+    title.textContent = gameState.chefGender === 'female' ? t('chefSweet') : t('chefSkilled');
+    if (gameState.activeFrame === 'cherry') ring.classList.add('ring-2', 'ring-rose-400');
+    if (gameState.activeFrame === 'royal') ring.classList.add('ring-2', 'ring-amber-400');
+  }
+
+  document.getElementById('header-total-undo').textContent = getTotalAvailableUndo();
+
+  // Sinkronisasi indikator Akun & Cloud di Header
+  const acc = getAccountDisplayInfo();
+  const syncIconEl = document.getElementById('header-sync-icon');
+  const accLabelEl = document.getElementById('header-account-label');
+  if (syncIconEl) syncIconEl.textContent = acc.syncIcon;
+  if (accLabelEl) accLabelEl.textContent = acc.displayName;
+
+  // Sinkronisasi label Bottom Nav sesuai bahasa aktif
+  document.getElementById('nav-label-home').textContent = t('navHome');
+  document.getElementById('nav-label-shop').textContent = t('navShop');
+  document.getElementById('nav-label-cards').textContent = t('navCards');
+  document.getElementById('nav-label-chef').textContent = t('navChef');
+
+  // Cek apakah ada set kartu yang siap diklaim
+  const hasClaimable = CARD_SETS.some(set => {
+    const ownedCount = set.cards.filter(c => gameState.unlockedCards.includes(c.id)).length;
+    return ownedCount === set.cards.length && !gameState.claimedSets.includes(set.id);
+  });
+  const cardBadge = document.getElementById('nav-card-badge');
+  if (hasClaimable) cardBadge.classList.remove('hidden');
+  else cardBadge.classList.add('hidden');
+}
+
+function showToast(msg, type = 'info') {
+  const container = document.getElementById('toast-container');
+  const el = document.createElement('div');
+  const bgMap = {
+    info: 'bg-stone-800 text-white',
+    success: 'bg-emerald-600 text-white',
+    gold: 'bg-amber-400 text-amber-950 border-2 border-amber-200',
+    error: 'bg-rose-600 text-white'
+  };
+  el.className = `${bgMap[type] || bgMap.info} px-4 py-2 rounded-2xl text-xs font-bold shadow-lg animate-pop text-center`;
+  el.textContent = msg;
+  container.appendChild(el);
+  setTimeout(() => {
+    el.style.opacity = '0';
+    el.style.transition = 'opacity 0.25s ease';
+    setTimeout(() => el.remove(), 260);
+  }, 2200);
+}
+
+function openModal(htmlContent) {
+  const backdrop = document.getElementById('modal-backdrop');
+  const box = document.getElementById('modal-box');
+  box.innerHTML = htmlContent;
+  backdrop.classList.remove('hidden');
+}
+
+function closeModal() {
+  document.getElementById('modal-backdrop').classList.add('hidden');
+}
+
+function rerenderActiveRoute() {
+  updateHeaderUI();
+  if (currentRoute === 'home') renderHome();
+  else if (currentRoute === 'shop') renderShop();
+  else if (currentRoute === 'cards') renderCards();
+  else if (currentRoute === 'chef') renderChef();
+  else if (currentRoute === 'game_sort' && sortState) renderCakeSort();
+  else if (currentRoute === 'game_block10' && block10State) renderBlock10();
+  else if (currentRoute === 'game_unscrew' && unscrewState) renderUnscrewGame();
+}
+
+function openSettingsModal() {
+  CafeAudio.initOnGesture();
+  CafeAudio.tap();
+  const a = gameState.audioSettings;
+  const sfxPct = Math.round(a.sfxVolume * 100);
+  const bgmPct = Math.round(a.bgmVolume * 100);
+  const acc = getAccountDisplayInfo();
+
+  openModal(`
+    <div class="text-left space-y-3.5 max-h-[80vh] overflow-y-auto pr-0.5">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-bold">${t('settingsTitle')}</h3>
+        <button onclick="closeModal()" class="w-8 h-8 rounded-full soft-surface flex items-center justify-center text-xs font-extrabold active:scale-90">✕</button>
+      </div>
+
+      <!-- Status Akun & Simpan Cloud -->
+      <div class="soft-surface rounded-2xl p-3 flex items-center justify-between gap-2">
+        <div class="min-w-0">
+          <div class="text-xs font-extrabold flex items-center gap-1.5">
+            <span>${acc.syncIcon}</span>
+            <span class="truncate">${t('accountSettingsCardTitle')}: ${acc.displayName}</span>
+          </div>
+          <div class="text-[10px] opacity-75 truncate">${acc.statusText}</div>
+        </div>
+        <button onclick="openAccountModal()" class="btn-candy px-3 py-1.5 rounded-xl text-[11px] font-extrabold shrink-0">
+          ${t('manageAccountBtn')}
+        </button>
+      </div>
+
+      <!-- Pilihan Bahasa (Bahasa Indonesia / English) -->
+      <div class="soft-surface rounded-2xl p-3">
+        <div class="text-xs font-extrabold mb-2">🌐 ${t('languageLabel')}</div>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="setAppLanguage('id')" class="py-2 px-3 rounded-xl text-xs font-extrabold transition flex items-center justify-center gap-1.5 ${gameState.language === 'id' ? 'btn-candy' : 'card-surface opacity-75'}">
+            <span>🇮🇩</span><span>Indonesia</span>
+          </button>
+          <button onclick="setAppLanguage('en')" class="py-2 px-3 rounded-xl text-xs font-extrabold transition flex items-center justify-center gap-1.5 ${gameState.language === 'en' ? 'btn-candy' : 'card-surface opacity-75'}">
+            <span>🇬🇧</span><span>English</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Kontrol SFX (Efek Suara) -->
+      <div class="soft-surface rounded-2xl p-3 space-y-2.5">
+        <div class="flex items-center justify-between gap-2">
+          <div>
+            <div class="text-xs font-extrabold">🔔 ${t('sfxLabel')}</div>
+            <div class="text-[10px] opacity-75">${t('sfxDesc')}</div>
+          </div>
+          <button onclick="toggleAudioChannel('sfx')" class="px-3 py-1.5 rounded-full text-[11px] font-extrabold transition shrink-0 ${a.sfxEnabled ? 'bg-emerald-500 text-white shadow-xs' : 'bg-stone-400/40 opacity-75'}">
+            ${a.sfxEnabled ? 'ON' : 'OFF'}
+          </button>
+        </div>
+        <div class="flex items-center gap-2.5">
+          <span class="text-[11px] font-bold opacity-75 w-14">${t('volumeLabel')}</span>
+          <input type="range" min="0" max="100" value="${sfxPct}" ${!a.sfxEnabled ? 'disabled' : ''}
+            oninput="updateAudioVolume('sfx', this.value)"
+            class="cafe-slider flex-1 ${!a.sfxEnabled ? 'opacity-40' : ''}" />
+          <span id="settings-sfx-val" class="text-xs font-extrabold w-10 text-right">${sfxPct}%</span>
+        </div>
+        <div class="flex justify-end">
+          <button onclick="testCafeSfx()" class="card-surface px-2.5 py-1 rounded-xl text-[10px] font-extrabold active:scale-95">
+            ${t('testSfxBtn')}
+          </button>
+        </div>
+      </div>
+
+      <!-- Kontrol Sound / BGM (Musik Latar Kafe) -->
+      <div class="soft-surface rounded-2xl p-3 space-y-2.5">
+        <div class="flex items-center justify-between gap-2">
+          <div>
+            <div class="text-xs font-extrabold">🎶 ${t('soundLabel')}</div>
+            <div class="text-[10px] opacity-75">${t('soundDesc')}</div>
+          </div>
+          <button onclick="toggleAudioChannel('bgm')" class="px-3 py-1.5 rounded-full text-[11px] font-extrabold transition shrink-0 ${a.bgmEnabled ? 'bg-emerald-500 text-white shadow-xs' : 'bg-stone-400/40 opacity-75'}">
+            ${a.bgmEnabled ? 'ON' : 'OFF'}
+          </button>
+        </div>
+        <div class="flex items-center gap-2.5">
+          <span class="text-[11px] font-bold opacity-75 w-14">${t('volumeLabel')}</span>
+          <input type="range" min="0" max="100" value="${bgmPct}" ${!a.bgmEnabled ? 'disabled' : ''}
+            oninput="updateAudioVolume('bgm', this.value)"
+            class="cafe-slider flex-1 ${!a.bgmEnabled ? 'opacity-40' : ''}" />
+          <span id="settings-bgm-val" class="text-xs font-extrabold w-10 text-right">${bgmPct}%</span>
+        </div>
+      </div>
+
+      <button onclick="CafeAudio.tap(); closeModal();" class="btn-gold w-full py-2.5 rounded-2xl text-xs font-extrabold">
+        ${t('doneBtn')}
+      </button>
+    </div>
+  `);
+}
+
+let accountAuthTab = 'register'; // 'login' | 'register'
+
+function openAccountModal() {
+  CafeAudio.initOnGesture();
+  CafeAudio.tap();
+  const acc = getAccountDisplayInfo();
+
+  if (acc.isRegistered) {
+    openModal(`
+      <div class="text-left space-y-3.5">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-bold">${t('accountModalTitle')}</h3>
+          <button onclick="closeModal()" class="w-8 h-8 rounded-full soft-surface flex items-center justify-center text-xs font-extrabold active:scale-90">✕</button>
+        </div>
+
+        <div class="soft-surface rounded-2xl p-3.5 text-center space-y-1">
+          <div class="text-3xl">${gameState.chefGender === 'female' ? '👩‍🍳' : '👨‍🍳'}</div>
+          <div class="text-[11px] font-extrabold text-emerald-600 uppercase">${t('loggedInAs')}</div>
+          <div class="text-sm font-extrabold">${acc.user.displayName || acc.user.email || acc.displayName}</div>
+          ${acc.user.email ? `<div class="text-xs opacity-75">${acc.user.email}</div>` : ''}
+          <div class="text-[10px] opacity-60 pt-1 break-all">${t('uidLabel')} ${acc.user.uid}</div>
+          <div class="inline-block mt-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-extrabold">
+            ☁️ ${acc.statusText}
+          </div>
+        </div>
+
+        <button onclick="handleManualCloudSync()" class="btn-gold w-full py-2.5 rounded-2xl text-xs font-extrabold">
+          ${t('syncNowBtn')}
+        </button>
+        <button onclick="handleAccountLogout()" class="soft-surface w-full py-2.5 rounded-2xl text-xs font-extrabold text-rose-600">
+          ${t('logoutBtn')}
+        </button>
+      </div>
+    `);
+    return;
+  }
+
+  // Tampilan Mode Tamu + Opsi Tautkan Akun Google / Email
+  openModal(`
+    <div class="text-left space-y-3 max-h-[82vh] overflow-y-auto pr-0.5">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-bold">${t('accountModalTitle')}</h3>
+        <button onclick="closeModal()" class="w-8 h-8 rounded-full soft-surface flex items-center justify-center text-xs font-extrabold active:scale-90">✕</button>
+      </div>
+
+      <!-- Peringatan Ramah Mode Tamu -->
+      <div class="rounded-2xl p-3 bg-amber-100/80 border border-amber-300 text-amber-950">
+        <div class="text-xs font-extrabold flex items-center gap-1.5">
+          <span>⚠️</span><span>${t('guestWarningTitle')}</span>
+        </div>
+        <p class="text-[11px] mt-1 leading-relaxed opacity-90">
+          ${t('guestWarningDesc')}
+        </p>
+      </div>
+
+      <!-- Login / Tautkan Google -->
+      <button onclick="handleGoogleLogin()" class="card-surface w-full py-2.5 px-3 rounded-2xl text-xs font-extrabold flex items-center justify-center gap-2 shadow-xs active:scale-95">
+        <span class="text-base">🇬</span>
+        <span>${t('googleLoginBtn')}</span>
+      </button>
+
+      <div class="flex items-center gap-2 text-[10px] font-bold opacity-50 uppercase">
+        <div class="h-px bg-current flex-1"></div>
+        <span>OR</span>
+        <div class="h-px bg-current flex-1"></div>
+      </div>
+
+      <!-- Tab Daftar & Tautkan vs Masuk Email -->
+      <div class="grid grid-cols-2 gap-1.5 soft-surface p-1 rounded-2xl">
+        <button onclick="switchAccountTab('register')" class="py-1.5 rounded-xl text-[11px] font-extrabold transition ${accountAuthTab === 'register' ? 'card-surface shadow-xs' : 'opacity-65'}">
+          ${t('emailTabRegister')}
+        </button>
+        <button onclick="switchAccountTab('login')" class="py-1.5 rounded-xl text-[11px] font-extrabold transition ${accountAuthTab === 'login' ? 'card-surface shadow-xs' : 'opacity-65'}">
+          ${t('emailTabLogin')}
+        </button>
+      </div>
+
+      <form onsubmit="handleEmailAuthSubmit(event)" class="space-y-2">
+        <input id="auth-email-input" type="email" required placeholder="${t('emailPlaceholder')}"
+          class="w-full px-3 py-2 rounded-xl card-surface text-xs font-semibold outline-none" />
+        <input id="auth-pass-input" type="password" required minlength="6" placeholder="${t('passPlaceholder')}"
+          class="w-full px-3 py-2 rounded-xl card-surface text-xs font-semibold outline-none" />
+        <button type="submit" class="btn-candy w-full py-2.5 rounded-2xl text-xs font-extrabold">
+          ${accountAuthTab === 'register' ? t('submitRegisterBtn') : t('submitLoginBtn')}
+        </button>
+      </form>
+    </div>
+  `);
+}
+
+function switchAccountTab(tab) {
+  CafeAudio.tap();
+  accountAuthTab = tab;
+  openAccountModal();
+}
+
+async function handleGoogleLogin() {
+  CafeAudio.initOnGesture();
+  if (!window.CloudSaveBridge || !window.CloudSaveBridge.enabled) {
+    showToast(gameState.language === 'en' ? 'Cloud service is offline in preview mode.' : 'Layanan Cloud belum aktif di mode pratinjau.', 'info');
+    return;
+  }
+  try {
+    await window.CloudSaveBridge.signInGoogle();
+    CafeAudio.starfruitChime();
+    showToast(gameState.language === 'en' ? '☁️ Progress linked & saved to Google!' : '☁️ Progres berhasil ditautkan ke Google!', 'success');
+    updateHeaderUI();
+    openAccountModal();
+  } catch (err) {
+    CafeAudio.oops();
+    showToast(err.message || 'Gagal login Google', 'error');
+  }
+}
+
+async function handleEmailAuthSubmit(event) {
+  event.preventDefault();
+  CafeAudio.initOnGesture();
+  const email = document.getElementById('auth-email-input').value.trim();
+  const password = document.getElementById('auth-pass-input').value;
+
+  if (!window.CloudSaveBridge || !window.CloudSaveBridge.enabled) {
+    showToast(gameState.language === 'en' ? 'Cloud service is offline in preview mode.' : 'Layanan Cloud belum aktif di mode pratinjau.', 'info');
+    return;
+  }
+
+  try {
+    const isRegister = accountAuthTab === 'register';
+    await window.CloudSaveBridge.signInOrRegisterEmail(email, password, isRegister);
+    CafeAudio.starfruitChime();
+    showToast(
+      isRegister
+        ? (gameState.language === 'en' ? '☁️ Account created & progress saved!' : '☁️ Akun dibuat & progres tersimpan!')
+        : (gameState.language === 'en' ? '☁️ Welcome back, Chef!' : '☁️ Selamat datang kembali, Koki!'),
+      'success'
+    );
+    updateHeaderUI();
+    openAccountModal();
+  } catch (err) {
+    CafeAudio.oops();
+    showToast(err.message || 'Autentikasi gagal', 'error');
+  }
+}
+
+async function handleManualCloudSync() {
+  CafeAudio.tap();
+  if (window.CloudSaveBridge && window.CloudSaveBridge.enabled) {
+    await window.CloudSaveBridge.saveStateToCloud(gameState);
+    CafeAudio.starfruitChime();
+    showToast(gameState.language === 'en' ? '☁️ Synced to cloud!' : '☁️ Progres tersinkron ke cloud!', 'success');
+    openAccountModal();
+  }
+}
+
+async function handleAccountLogout() {
+  CafeAudio.tap();
+  if (window.CloudSaveBridge && window.CloudSaveBridge.enabled) {
+    await window.CloudSaveBridge.logoutToGuest();
+    showToast(gameState.language === 'en' ? 'Switched to Guest Mode' : 'Keluar ke Mode Tamu', 'info');
+    updateHeaderUI();
+    openAccountModal();
+  }
+}
+
+function renderChef() {
+  const main = document.getElementById('main-content');
+  const freeLeft = getRemainingDailyFreeUndo();
+
+  main.innerHTML = `
+    <div class="space-y-4 animate-pop">
+      <div class="card-surface rounded-3xl p-4 text-center">
+        <div class="w-20 h-20 mx-auto rounded-full soft-surface flex items-center justify-center text-5xl ${gameState.legendaryUnlocked ? 'legendary-aura' : ''}">
+          ${gameState.chefGender === 'female' ? '👩‍🍳' : '👨‍🍳'}
+        </div>
+        <div class="mt-2">
+          <span class="text-[11px] font-extrabold px-3 py-0.5 rounded-full ${gameState.legendaryUnlocked ? 'bg-amber-300 text-amber-950' : 'soft-surface'}">
+            ${gameState.legendaryUnlocked ? t('chefTagLegendary') : t('chefTagNormal')}
+          </span>
+        </div>
+        <h2 class="text-lg font-bold mt-1.5">${t('chooseChefTitle')}</h2>
+        <p class="text-xs opacity-75">${t('chooseChefDesc')}</p>
+
+        <div class="grid grid-cols-2 gap-3 mt-4">
+          <button onclick="selectChefGender('female')" class="p-3 rounded-2xl border-2 transition flex flex-col items-center ${gameState.chefGender === 'female' ? 'border-rose-400 soft-surface scale-[1.02]' : 'border-current/10 opacity-70'}">
+            <span class="text-4xl">👩‍🍳</span>
+            <span class="text-xs font-extrabold mt-1">${t('femaleChef')}</span>
+            ${gameState.chefGender === 'female' ? `<span class="text-[10px] font-bold text-rose-600 mt-0.5">${t('activeDot')}</span>` : ''}
+          </button>
+          <button onclick="selectChefGender('male')" class="p-3 rounded-2xl border-2 transition flex flex-col items-center ${gameState.chefGender === 'male' ? 'border-rose-400 soft-surface scale-[1.02]' : 'border-current/10 opacity-70'}">
+            <span class="text-4xl">👨‍🍳</span>
+            <span class="text-xs font-extrabold mt-1">${t('maleChef')}</span>
+            ${gameState.chefGender === 'male' ? `<span class="text-[10px] font-bold text-rose-600 mt-0.5">${t('activeDot')}</span>` : ''}
+          </button>
+        </div>
+      </div>
+
+      <!-- Status Skill Legendaris -->
+      <div class="card-surface rounded-3xl p-4">
+        <h3 class="text-sm font-bold flex items-center gap-1.5">
+          <span>👑</span> ${t('legendarySkillHeader')}
+        </h3>
+        ${gameState.legendaryUnlocked ? `
+          <p class="text-xs opacity-80 mt-1">${t('legendaryActiveDesc')}</p>
+          <div class="soft-surface rounded-2xl p-3 mt-3 flex items-center justify-between">
+            <span class="text-xs font-bold">${t('remainingFreeUndoToday')}</span>
+            <span class="text-sm font-extrabold text-amber-600">${freeLeft} / 3</span>
+          </div>
+        ` : `
+          <p class="text-xs opacity-80 mt-1">${t('legendaryLockedDesc')}</p>
+          <button onclick="navigateTo('cards')" class="btn-gold w-full py-2 rounded-2xl text-xs font-extrabold mt-3">${t('goToCards')}</button>
+        `}
+      </div>
+
+      <!-- Tombol Reset Progres (Untuk Testing) -->
+      <div class="text-center pt-2">
+        <button onclick="confirmResetProgress()" class="text-[11px] font-bold opacity-55 hover:opacity-100 underline">
+          ${t('resetProgressLink')}
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function selectChefGender(gender) {
+  CafeAudio.tap();
+  gameState.chefGender = gender;
+  saveState();
+  renderChef();
+  showToast(`Avatar diganti ke ${gender === 'female' ? 'Koki Cewek 👩‍🍳' : 'Koki Cowok 👨‍🍳'}`, 'info');
+}
+
+function confirmResetProgress() {
+  openModal(`
+    <div class="text-3xl mb-2">🔄</div>
+    <h3 class="text-base font-bold">${t('resetConfirmTitle')}</h3>
+    <p class="text-xs opacity-75 mt-1">${t('resetConfirmDesc')}</p>
+    <div class="grid grid-cols-2 gap-2 mt-4">
+      <button onclick="closeModal()" class="soft-surface py-2 rounded-2xl text-xs font-extrabold">${t('cancel')}</button>
+      <button onclick="resetAllData()" class="bg-rose-600 text-white py-2 rounded-2xl text-xs font-extrabold">${t('yesReset')}</button>
+    </div>
+  `);
+}
+
+function resetAllData() {
+  localStorage.removeItem(STORAGE_KEY);
+  gameState = loadState();
+  saveState();
+  closeModal();
+  navigateTo('home');
+  showToast('Data game berhasil direset!', 'info');
+}
+
+/**
+ * ============================================================================
+ * 6. MODE 1: SORTIR KUE (CAKE SORT PUZZLE)
+ * ============================================================================
+ */
+let sortState = null;
+
+function initCakeSortGame() {
+  const lv = gameState.levelsCompleted.sort;
+  const numColors = Math.min(4 + Math.floor((lv - 1) / 2), 6); // 4 s/d 6 jenis kue
+  const selectedTypes = CAKE_TYPES.slice(0, numColors);
+  const stackCapacity = 4;
+
+  // Buat 4 potong untuk setiap jenis kue lalu acak
+  let pool = [];
+  selectedTypes.forEach(t => {
+    for (let i = 0; i < stackCapacity; i++) pool.push(t.id);
+  });
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+
+  // Bagi ke piring + tambah 2 piring kosong
+  const plates = [];
+  for (let i = 0; i < numColors; i++) {
+    plates.push(pool.slice(i * stackCapacity, (i + 1) * stackCapacity));
+  }
+  plates.push([]);
+  plates.push([]);
+
+  sortState = {
+    plates,
+    capacity: stackCapacity,
+    selectedPlate: null,
+    history: [],
+    completedPlates: 0,
+    targetCompleted: numColors
+  };
+
+  renderCakeSort();
+}
+
+function renderCakeSort() {
+  const main = document.getElementById('main-content');
+  const totalUndo = getTotalAvailableUndo();
+
+  main.innerHTML = `
+    <div class="flex flex-col h-full justify-between animate-pop">
+      <!-- Top Bar Mode -->
+      <div class="flex items-center justify-between mb-2">
+        <button onclick="navigateTo('home')" class="card-surface px-3 py-1.5 rounded-2xl text-xs font-extrabold active:scale-95">
+          ${t('backCafe')}
+        </button>
+        <div class="text-center">
+          <div class="text-xs font-extrabold">${t('sortTitle')} • Level ${gameState.levelsCompleted.sort}</div>
+          <div class="text-[11px] opacity-75">${t('sortInstruction')}</div>
+        </div>
+        <button onclick="initCakeSortGame()" class="card-surface px-2.5 py-1.5 rounded-2xl text-xs font-extrabold active:scale-95" title="Reset">
+          🔄
+        </button>
+      </div>
+
+      <!-- Area Piring Kue -->
+      <div class="grid grid-cols-3 gap-2.5 my-auto py-2">
+        ${sortState.plates.map((plate, idx) => {
+          const isSelected = sortState.selectedPlate === idx;
+          const isFullMatch = plate.length === sortState.capacity && plate.every(id => id === plate[0]);
+          return `
+            <button onclick="handlePlateTap(${idx})" class="card-surface rounded-3xl p-2 h-40 flex flex-col-reverse items-center justify-start gap-1 relative transition ${isSelected ? 'ring-4 ring-rose-400 -translate-y-1.5' : ''} ${isFullMatch ? 'border-emerald-400 bg-emerald-50/60' : ''}">
+              <div class="w-full h-2.5 rounded-full bg-stone-300/80 mt-1 shrink-0"></div>
+              ${plate.map(cakeId => {
+                const cake = CAKE_TYPES.find(c => c.id === cakeId);
+                return `
+                  <div class="w-full h-7 rounded-xl flex items-center justify-center gap-1 text-xs font-extrabold shadow-xs border" style="background:${cake.bg}; border-color:${cake.border}; color:${cake.text}">
+                    <span>${cake.emoji}</span>
+                    <span class="text-[9px] truncate">${cake.name.split(' ')[0]}</span>
+                  </div>
+                `;
+              }).join('')}
+              ${isFullMatch ? `<span class="absolute top-1.5 right-1.5 text-xs bg-emerald-500 text-white rounded-full w-5 h-5 flex items-center justify-center shadow">✓</span>` : ''}
+            </button>
+          `;
+        }).join('')}
+      </div>
+
+      <!-- Action Bar: Undo & Booster -->
+      <div class="grid grid-cols-2 gap-2.5 pt-2">
+        <button onclick="undoCakeSort()" class="card-surface py-2.5 px-3 rounded-2xl text-xs font-extrabold flex items-center justify-center gap-1.5 active:scale-95">
+          <span>↩️ Undo</span>
+          <span class="soft-surface px-2 py-0.5 rounded-full text-[11px]">${totalUndo}</span>
+        </button>
+        <button onclick="boosterCakeSort()" class="btn-gold py-2.5 px-3 rounded-2xl text-xs font-extrabold flex items-center justify-center gap-1.5">
+          <span>${t('addPlateBooster')}</span>
+          <span class="bg-black/15 px-2 py-0.5 rounded-full text-[11px]">${gameState.boosterCount}</span>
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function handlePlateTap(idx) {
+  CafeAudio.initOnGesture();
+  const plate = sortState.plates[idx];
+  const isLockedComplete = plate.length === sortState.capacity && plate.every(id => id === plate[0]);
+
+  if (sortState.selectedPlate === null) {
+    if (plate.length === 0 || isLockedComplete) {
+      CafeAudio.tap();
+      return;
+    }
+    sortState.selectedPlate = idx;
+    CafeAudio.tap();
+    renderCakeSort();
+    return;
+  }
+
+  if (sortState.selectedPlate === idx) {
+    sortState.selectedPlate = null;
+    CafeAudio.tap();
+    renderCakeSort();
+    return;
+  }
+
+  const fromIdx = sortState.selectedPlate;
+  const fromPlate = sortState.plates[fromIdx];
+  const movingCake = fromPlate[fromPlate.length - 1];
+  const targetTop = plate[plate.length - 1];
+
+  if (plate.length < sortState.capacity && (!targetTop || targetTop === movingCake)) {
+    // Simpan snapshot untuk Undo
+    sortState.history.push(JSON.parse(JSON.stringify(sortState.plates)));
+    plate.push(fromPlate.pop());
+    sortState.selectedPlate = null;
+    CafeAudio.cakePlop();
+
+    // Cek apakah piring tujuan baru saja lengkap 4 kue sejenis
+    if (plate.length === sortState.capacity && plate.every(id => id === plate[0])) {
+      setTimeout(() => CafeAudio.cafeBell(), 120);
+      showToast('Ting! Satu piring kue siap disajikan! 🔔', 'success');
+    }
+
+    renderCakeSort();
+    checkCakeSortWin();
+  } else {
+    CafeAudio.oops();
+    showToast('Kue harus diletakkan di atas kue yang sama atau piring kosong!', 'error');
+    sortState.selectedPlate = null;
+    renderCakeSort();
+  }
+}
+
+function undoCakeSort() {
+  if (sortState.history.length === 0) {
+    showToast('Belum ada langkah untuk di-Undo', 'info');
+    return;
+  }
+  if (!consumeOneUndo()) {
+    CafeAudio.oops();
+    showToast('Tiket Undo habis! Beli di Shop (15 🌟)', 'error');
+    return;
+  }
+  sortState.plates = sortState.history.pop();
+  sortState.selectedPlate = null;
+  CafeAudio.tap();
+  renderCakeSort();
+}
+
+function boosterCakeSort() {
+  if (gameState.boosterCount <= 0) {
+    CafeAudio.oops();
+    showToast('Booster habis! Beli di Shop (30 🌟)', 'error');
+    return;
+  }
+  if (sortState.plates.length >= 9) {
+    showToast('Jumlah piring sudah maksimal!', 'info');
+    return;
+  }
+  gameState.boosterCount -= 1;
+  saveState();
+  sortState.plates.push([]);
+  CafeAudio.starfruitChime();
+  showToast('🪄 1 Piring Tambahan diletakkan!', 'gold');
+  renderCakeSort();
+}
+
+function checkCakeSortWin() {
+  const completedCount = sortState.plates.filter(
+    p => p.length === sortState.capacity && p.every(id => id === p[0])
+  ).length;
+
+  if (completedCount >= sortState.targetCompleted) {
+    const earned = rewardLevelStarfruit('Sortir Kue');
+    gameState.levelsCompleted.sort += 1;
+    saveState();
+
+    setTimeout(() => {
+      openModal(`
+        <div class="text-5xl mb-2 animate-bounce">🎂</div>
+        <h3 class="text-xl font-bold">${t('sortWinTitle')}</h3>
+        <p class="text-xs opacity-80 mt-1">${t('sortWinDesc')}</p>
+        <div class="soft-surface rounded-2xl p-3 my-3 font-extrabold text-base text-amber-600">
+          + ${earned} 🌟 Belimbing
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="closeModal(); navigateTo('home');" class="soft-surface py-2.5 rounded-2xl text-xs font-extrabold">${t('toCafe')}</button>
+          <button onclick="closeModal(); initCakeSortGame();" class="btn-candy py-2.5 rounded-2xl text-xs font-extrabold">${t('nextLevel')}</button>
+        </div>
+      `);
+    }, 300);
+  }
+}
+
+/**
+ * ============================================================================
+ * 7. MODE 2: BLOK PUZZLE KUE 10x10 (DENGAN AUTO-POPUP REVIVE 35 BELIMBING)
+ * ============================================================================
+ */
+const BLOCK_SHAPES = [
+  { cells: [[0,0]], cakeIdx: 0 },
+  { cells: [[0,0],[0,1]], cakeIdx: 1 },
+  { cells: [[0,0],[1,0]], cakeIdx: 2 },
+  { cells: [[0,0],[0,1],[0,2]], cakeIdx: 3 },
+  { cells: [[0,0],[1,0],[2,0]], cakeIdx: 4 },
+  { cells: [[0,0],[0,1],[1,0],[1,1]], cakeIdx: 5 }, // Kotak 2x2
+  { cells: [[0,0],[1,0],[1,1]], cakeIdx: 0 },       // L kecil
+  { cells: [[0,1],[1,0],[1,1]], cakeIdx: 1 },
+  { cells: [[0,0],[0,1],[0,2],[1,1]], cakeIdx: 2 }, // T kecil
+  { cells: [[0,0],[0,1],[0,2],[0,3]], cakeIdx: 3 }  // Batang 4
+];
+
+let block10State = null;
+
+function initBlock10Game() {
+  const grid = Array.from({ length: 10 }, () => Array(10).fill(null));
+  block10State = {
+    grid,
+    score: 0,
+    tray: generateThreeBlocks(),
+    selectedTrayIdx: 0,
+    history: [],
+    revivedThisRun: false
+  };
+  renderBlock10();
+}
+
+function generateThreeBlocks() {
+  return [0, 1, 2].map(() => {
+    const tpl = BLOCK_SHAPES[Math.floor(Math.random() * BLOCK_SHAPES.length)];
+    return JSON.parse(JSON.stringify(tpl));
+  });
+}
+
+function canPlaceShapeAt(grid, shape, baseR, baseC) {
+  for (const [dr, dc] of shape.cells) {
+    const r = baseR + dr;
+    const c = baseC + dc;
+    if (r < 0 || r >= 10 || c < 0 || c >= 10) return false;
+    if (grid[r][c] !== null) return false;
+  }
+  return true;
+}
+
+function hasAnyValidMove(grid, tray) {
+  for (const piece of tray) {
+    if (!piece) continue;
+    for (let r = 0; r < 10; r++) {
+      for (let c = 0; c < 10; c++) {
+        if (canPlaceShapeAt(grid, piece, r, c)) return true;
+      }
+    }
+  }
+  return false;
+}
+
+function renderBlock10() {
+  const main = document.getElementById('main-content');
+  const totalUndo = getTotalAvailableUndo();
+
+  main.innerHTML = `
+    <div class="flex flex-col h-full justify-between animate-pop">
+      <!-- Top Bar -->
+      <div class="flex items-center justify-between mb-1.5">
+        <button onclick="navigateTo('home')" class="card-surface px-3 py-1.5 rounded-2xl text-xs font-extrabold active:scale-95">
+          ${t('backCafe')}
+        </button>
+        <div class="text-center">
+          <div class="text-xs font-extrabold">${t('block10Title')}</div>
+          <div class="text-[11px] font-bold text-amber-600">${t('scoreLabel')}: ${block10State.score} • ${t('targetLabel')}: 300</div>
+        </div>
+        <button onclick="finishBlock10AndClaim()" class="soft-surface px-2.5 py-1.5 rounded-2xl text-[11px] font-extrabold active:scale-95">
+          ${t('finishBtn')}
+        </button>
+      </div>
+
+      <!-- Papan Loyang 10x10 -->
+      <div class="card-surface p-2 rounded-2xl aspect-square w-full max-w-[350px] mx-auto shadow-inner">
+        <div class="grid-10x10 w-full h-full">
+          ${block10State.grid.map((row, r) => row.map((cellCakeId, c) => {
+            if (cellCakeId) {
+              const cake = CAKE_TYPES.find(x => x.id === cellCakeId);
+              return `
+                <div onclick="handleBlockCellTap(${r}, ${c})" class="rounded-md flex items-center justify-center text-[11px] font-bold shadow-xs" style="background:${cake.bg}; color:${cake.text}">
+                  ${cake.emoji}
+                </div>
+              `;
+            }
+            return `
+              <div onclick="handleBlockCellTap(${r}, ${c})" class="rounded-md bg-black/5 hover:bg-rose-200/50 active:bg-rose-300/60 transition cursor-pointer"></div>
+            `;
+          }).join('')).join('')}
+        </div>
+      </div>
+
+      <!-- Pilihan 3 Blok Kue di Bawah (Tap untuk pilih, lalu Tap papan 10x10) -->
+      <div class="my-1.5">
+        <div class="text-[10px] font-bold text-center opacity-70 mb-1">${t('block10Instruction')}</div>
+        <div class="grid grid-cols-3 gap-2">
+          ${block10State.tray.map((piece, idx) => {
+            if (!piece) {
+              return `<div class="card-surface rounded-2xl h-20 flex items-center justify-center opacity-30 text-xs font-bold">${t('placedLabel')}</div>`;
+            }
+            const cake = CAKE_TYPES[piece.cakeIdx];
+            const isSel = block10State.selectedTrayIdx === idx;
+            return `
+              <button onclick="selectBlockTray(${idx})" class="card-surface rounded-2xl h-20 p-1.5 flex items-center justify-center transition ${isSel ? 'ring-4 ring-rose-400 scale-[1.03]' : 'opacity-85'}">
+                <div class="grid grid-cols-4 grid-rows-3 gap-0.5">
+                  ${[0,1,2].map(rr => [0,1,2,3].map(cc => {
+                    const has = piece.cells.some(([dr, dc]) => dr === rr && dc === cc);
+                    return has
+                      ? `<div class="w-4 h-4 rounded-xs flex items-center justify-center text-[9px]" style="background:${cake.bg}">${cake.emoji}</div>`
+                      : `<div class="w-4 h-4"></div>`;
+                  }).join('')).join('')}
+                </div>
+              </button>
+            `;
+          }).join('')}
+        </div>
+      </div>
+
+      <!-- Action Bar: Undo & Booster -->
+      <div class="grid grid-cols-2 gap-2.5">
+        <button onclick="undoBlock10()" class="card-surface py-2 px-3 rounded-2xl text-xs font-extrabold flex items-center justify-center gap-1.5 active:scale-95">
+          <span>↩️ Undo</span>
+          <span class="soft-surface px-2 py-0.5 rounded-full text-[11px]">${totalUndo}</span>
+        </button>
+        <button onclick="boosterBlock10()" class="btn-gold py-2 px-3 rounded-2xl text-xs font-extrabold flex items-center justify-center gap-1.5">
+          <span>${t('clear3x3Booster')}</span>
+          <span class="bg-black/15 px-2 py-0.5 rounded-full text-[11px]">${gameState.boosterCount}</span>
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function selectBlockTray(idx) {
+  if (!block10State.tray[idx]) return;
+  CafeAudio.tap();
+  block10State.selectedTrayIdx = idx;
+  renderBlock10();
+}
+
+function handleBlockCellTap(r, c) {
+  CafeAudio.initOnGesture();
+  const idx = block10State.selectedTrayIdx;
+  const piece = idx !== null ? block10State.tray[idx] : null;
+  if (!piece) {
+    showToast('Pilih blok kue di bagian bawah dulu!', 'info');
+    return;
+  }
+
+  if (!canPlaceShapeAt(block10State.grid, piece, r, c)) {
+    CafeAudio.oops();
+    showToast('Area tidak cukup atau sudah terisi kue!', 'error');
+    return;
+  }
+
+  // Simpan riwayat langkah untuk Undo
+  block10State.history.push({
+    grid: JSON.parse(JSON.stringify(block10State.grid)),
+    tray: JSON.parse(JSON.stringify(block10State.tray)),
+    score: block10State.score
+  });
+
+  const cake = CAKE_TYPES[piece.cakeIdx];
+  for (const [dr, dc] of piece.cells) {
+    block10State.grid[r + dr][c + dc] = cake.id;
+  }
+  block10State.score += piece.cells.length * 10;
+  block10State.tray[idx] = null;
+  CafeAudio.biscuitPlace();
+
+  // Cek baris atau kolom penuh (10 kotak)
+  const fullRows = [];
+  const fullCols = [];
+  for (let i = 0; i < 10; i++) {
+    if (block10State.grid[i].every(cell => cell !== null)) fullRows.push(i);
+    let colFull = true;
+    for (let j = 0; j < 10; j++) {
+      if (block10State.grid[j][i] === null) { colFull = false; break; }
+    }
+    if (colFull) fullCols.push(i);
+  }
+
+  const totalCleared = fullRows.length + fullCols.length;
+  if (totalCleared > 0) {
+    fullRows.forEach(rr => {
+      for (let cc = 0; cc < 10; cc++) block10State.grid[rr][cc] = null;
+    });
+    fullCols.forEach(cc => {
+      for (let rr = 0; rr < 10; rr++) block10State.grid[rr][cc] = null;
+    });
+    const bonus = totalCleared * 100 * totalCleared;
+    block10State.score += bonus;
+    CafeAudio.sugarClear(totalCleared);
+    showToast(`✨ ${totalCleared} Baris/Kolom Terkirim! +${bonus} Poin`, 'gold');
+  }
+
+  if (block10State.score > gameState.highScore10x10) {
+    gameState.highScore10x10 = block10State.score;
+    saveState();
+  }
+
+  // Jika 3 blok di tray habis, isi 3 blok baru
+  if (block10State.tray.every(p => p === null)) {
+    block10State.tray = generateThreeBlocks();
+  }
+
+  // Otomatis pilih blok berikutnya yang tersedia
+  block10State.selectedTrayIdx = block10State.tray.findIndex(p => p !== null);
+  renderBlock10();
+
+  // Cek apakah STUCK (tidak ada satu pun blok di tray yang muat di papan 10x10)
+  if (!hasAnyValidMove(block10State.grid, block10State.tray)) {
+    setTimeout(() => triggerBlock10StuckPopup(), 250);
+  }
+}
+
+function undoBlock10() {
+  if (block10State.history.length === 0) {
+    showToast('Belum ada langkah untuk di-Undo', 'info');
+    return;
+  }
+  if (!consumeOneUndo()) {
+    CafeAudio.oops();
+    showToast('Tiket Undo habis! Beli di Shop (15 🌟)', 'error');
+    return;
+  }
+  const prev = block10State.history.pop();
+  block10State.grid = prev.grid;
+  block10State.tray = prev.tray;
+  block10State.score = prev.score;
+  block10State.selectedTrayIdx = block10State.tray.findIndex(p => p !== null);
+  CafeAudio.tap();
+  renderBlock10();
+}
+
+function boosterBlock10() {
+  if (gameState.boosterCount <= 0) {
+    CafeAudio.oops();
+    showToast('Booster habis! Beli di Shop (30 🌟)', 'error');
+    return;
+  }
+  gameState.boosterCount -= 1;
+  saveState();
+  // Bersihkan area tengah 4x4 agar langsung lega
+  for (let r = 3; r <= 6; r++) {
+    for (let c = 3; c <= 6; c++) {
+      block10State.grid[r][c] = null;
+    }
+  }
+  CafeAudio.sugarClear(2);
+  showToast('🪄 Booster membersihkan area tengah loyang!', 'gold');
+  renderBlock10();
+}
+
+// POP-UP OTOMATIS SAAT STUCK: LANJUT (35 BELIMBING) ATAU TIDAK
+function triggerBlock10StuckPopup() {
+  CafeAudio.oops();
+  const canAfford = gameState.starfruit >= 35;
+
+  openModal(`
+    <div class="text-5xl mb-2">😵‍💫</div>
+    <span class="text-[11px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700">${t('stuckTag')}</span>
+    <h3 class="text-xl font-bold mt-1.5">${t('stuckTitle')}</h3>
+    <p class="text-xs opacity-80 mt-1">
+      ${t('scoreLabel')}: <b>${block10State.score}</b>. ${t('stuckDesc')}
+    </p>
+
+    <div class="mt-4 space-y-2">
+      <button onclick="reviveBlock10()" class="btn-gold w-full py-3 rounded-2xl text-xs font-extrabold flex items-center justify-center gap-2 ${!canAfford ? 'opacity-60' : ''}">
+        <span>${t('reviveBtn')}</span>
+        <span class="bg-black/15 px-2.5 py-0.5 rounded-full">🌟 35</span>
+      </button>
+      <button onclick="closeModal(); finishBlock10AndClaim();" class="soft-surface w-full py-2.5 rounded-2xl text-xs font-extrabold">
+        ${t('noFinishBtn')}
+      </button>
+    </div>
+  `);
+}
+
+function reviveBlock10() {
+  if (gameState.starfruit < 35) {
+    CafeAudio.oops();
+    showToast('Belimbing tidak cukup untuk Lanjut (Butuh 35 🌟)', 'error');
+    return;
+  }
+  gameState.starfruit -= 35;
+  saveState();
+
+  // Bersihkan area tengah 5x5 + segarkan blok tray agar pasti bisa lanjut
+  for (let r = 2; r <= 7; r++) {
+    for (let c = 2; c <= 7; c++) {
+      block10State.grid[r][c] = null;
+    }
+  }
+  block10State.tray = generateThreeBlocks();
+  block10State.selectedTrayIdx = 0;
+
+  closeModal();
+  CafeAudio.legendaryFanfare();
+  showToast('✨ Revive Berhasil! Area tengah loyang dibersihkan!', 'gold');
+  renderBlock10();
+}
+
+function finishBlock10AndClaim() {
+  const earned = rewardLevelStarfruit('Blok Puzzle 10x10');
+  openModal(`
+    <div class="text-5xl mb-2">🧇</div>
+    <h3 class="text-xl font-bold">${t('blockEndTitle')}</h3>
+    <p class="text-xs opacity-80 mt-1">${t('finalScore')}: <b>${block10State.score}</b></p>
+    <div class="soft-surface rounded-2xl p-3 my-3 font-extrabold text-base text-amber-600">
+      + ${earned} 🌟 Belimbing
+    </div>
+    <div class="grid grid-cols-2 gap-2">
+      <button onclick="closeModal(); navigateTo('home');" class="soft-surface py-2.5 rounded-2xl text-xs font-extrabold">${t('toCafe')}</button>
+      <button onclick="closeModal(); initBlock10Game();" class="btn-candy py-2.5 rounded-2xl text-xs font-extrabold">${t('playAgain')}</button>
+    </div>
+  `);
+}
+
+/**
+ * ============================================================================
+ * 8. MODE 3: BONGKAR LOYANG / LEPAS BAUT (BAKERY UNSCREW PUZZLE)
+ * ============================================================================
+ */
+let unscrewState = null;
+
+function initUnscrewGame() {
+  const lv = gameState.levelsCompleted.unscrew;
+  // Susun lapisan loyang besi/kayu bertingkat dengan baut penahan
+  // Lapisan atas (layer 2) menindih baut lapisan bawah (layer 1 & 0) jika posisinya berdekatan!
+  const templates = [
+    {
+      pans: [
+        { id: 'p1', name: 'Loyang Tart Bawah', color: '#D4A373', border: '#8B5E34', x: 16, y: 38, w: 68, h: 44, layer: 0, fallen: false },
+        { id: 'p2', name: 'Cetakan Kayu Tengah', color: '#E9EDC9', border: '#606C38', x: 24, y: 20, w: 52, h: 46, layer: 1, fallen: false },
+        { id: 'p3', name: 'Plat Kue Hati Atas', color: '#FFAFCC', border: '#C9184A', x: 30, y: 12, w: 40, h: 30, layer: 2, fallen: false }
+      ],
+      bolts: [
+        { id: 'b1', x: 36, y: 22, cakeIdx: 0, panIds: ['p3'], removed: false },
+        { id: 'b2', x: 64, y: 22, cakeIdx: 1, panIds: ['p3'], removed: false },
+        { id: 'b3', x: 32, y: 48, cakeIdx: 2, panIds: ['p2', 'p1'], removed: false },
+        { id: 'b4', x: 68, y: 48, cakeIdx: 3, panIds: ['p2', 'p1'], removed: false },
+        { id: 'b5', x: 24, y: 72, cakeIdx: 0, panIds: ['p1'], removed: false },
+        { id: 'b6', x: 76, y: 72, cakeIdx: 1, panIds: ['p1'], removed: false }
+      ],
+      spareSlots: 4
+    },
+    {
+      pans: [
+        { id: 'p1', name: 'Loyang Besi Bundar', color: '#ADB5BD', border: '#495057', x: 14, y: 34, w: 72, h: 48, layer: 0, fallen: false },
+        { id: 'p2', name: 'Papan Kayu Cokelat', color: '#BC6C25', border: '#582F0E', x: 18, y: 16, w: 34, h: 52, layer: 1, fallen: false },
+        { id: 'p3', name: 'Papan Kayu Vanila', color: '#FAEDCD', border: '#9C6644', x: 48, y: 16, w: 34, h: 52, layer: 1, fallen: false },
+        { id: 'p4', name: 'Segel Kue Bintang', color: '#FFD166', border: '#B5651D', x: 34, y: 28, w: 32, h: 26, layer: 2, fallen: false }
+      ],
+      bolts: [
+        { id: 'b1', x: 50, y: 36, cakeIdx: 4, panIds: ['p4'], removed: false },
+        { id: 'b2', x: 28, y: 24, cakeIdx: 2, panIds: ['p2'], removed: false },
+        { id: 'b3', x: 72, y: 24, cakeIdx: 5, panIds: ['p3'], removed: false },
+        { id: 'b4', x: 30, y: 58, cakeIdx: 2, panIds: ['p2', 'p1'], removed: false },
+        { id: 'b5', x: 70, y: 58, cakeIdx: 5, panIds: ['p3', 'p1'], removed: false },
+        { id: 'b6', x: 50, y: 74, cakeIdx: 4, panIds: ['p1'], removed: false }
+      ],
+      spareSlots: 4
+    }
+  ];
+
+  const chosen = JSON.parse(JSON.stringify(templates[(lv - 1) % templates.length]));
+  unscrewState = {
+    pans: chosen.pans,
+    bolts: chosen.bolts,
+    spareHoles: Array(chosen.spareSlots).fill(null),
+    history: []
+  };
+
+  renderUnscrewGame();
+}
+
+function isBoltBlockedByUpperPan(bolt) {
+  // Baut terhalang jika ada loyang yang BELUM jatuh di layer lebih tinggi yang menutupi koordinat (x, y) baut,
+  // dan loyang tersebut BUKAN loyang yang dipegang langsung oleh baut ini.
+  for (const pan of unscrewState.pans) {
+    if (pan.fallen) continue;
+    if (bolt.panIds.includes(pan.id)) continue;
+    const boltMaxLayer = Math.max(...bolt.panIds.map(pid => {
+      const p = unscrewState.pans.find(x => x.id === pid);
+      return p ? p.layer : 0;
+    }));
+    if (pan.layer > boltMaxLayer) {
+      const insideX = bolt.x >= pan.x - 2 && bolt.x <= pan.x + pan.w + 2;
+      const insideY = bolt.y >= pan.y - 2 && bolt.y <= pan.y + pan.h + 2;
+      if (insideX && insideY) return true;
+    }
+  }
+  return false;
+}
+
+function renderUnscrewGame() {
+  const main = document.getElementById('main-content');
+  const totalUndo = getTotalAvailableUndo();
+
+  main.innerHTML = `
+    <div class="flex flex-col h-full justify-between animate-pop">
+      <!-- Top Bar -->
+      <div class="flex items-center justify-between mb-2">
+        <button onclick="navigateTo('home')" class="card-surface px-3 py-1.5 rounded-2xl text-xs font-extrabold active:scale-95">
+          ${t('backCafe')}
+        </button>
+        <div class="text-center">
+          <div class="text-xs font-extrabold">${t('unscrewTitle')} • Lv. ${gameState.levelsCompleted.unscrew}</div>
+          <div class="text-[11px] opacity-75">${t('unscrewInstruction')}</div>
+        </div>
+        <button onclick="initUnscrewGame()" class="card-surface px-2.5 py-1.5 rounded-2xl text-xs font-extrabold active:scale-95">
+          🔄
+        </button>
+      </div>
+
+      <!-- Lubang Penyimpanan Baut Sementara (Akan otomatis terkemas jika 2 baut sejenis terkumpul!) -->
+      <div class="card-surface rounded-2xl p-2.5 mb-2">
+        <div class="text-[10px] font-bold text-center opacity-75 mb-1.5">
+          ${t('sparePinBox')}
+        </div>
+        <div class="flex items-center justify-center gap-2.5">
+          ${unscrewState.spareHoles.map(cakeIdx => {
+            if (cakeIdx === null) {
+              return `<div class="w-10 h-10 rounded-full border-2 border-dashed border-current/25 bg-black/5 flex items-center justify-center text-[10px] opacity-40">○</div>`;
+            }
+            const cake = CAKE_TYPES[cakeIdx];
+            return `
+              <div class="w-10 h-10 rounded-full flex items-center justify-center text-lg shadow-md border-2 animate-pop" style="background:${cake.bg}; border-color:${cake.border}">
+                ${cake.emoji}
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+
+      <!-- Papan Kerja Loyang Besi & Kayu -->
+      <div class="card-surface rounded-3xl relative w-full flex-1 min-h-[290px] max-h-[360px] overflow-hidden shadow-inner my-1">
+        <!-- Grid lubang latar belakang -->
+        <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#8C625E 1.5px, transparent 1.5px); background-size: 24px 24px;"></div>
+
+        <!-- Render Loyang Bertingkat -->
+        ${unscrewState.pans.map(pan => `
+          <div id="pan-el-${pan.id}" class="absolute rounded-2xl shadow-md border-4 flex items-end justify-center pb-1.5 transition-all duration-300 ${pan.fallen ? 'pan-falling' : ''}"
+            style="left:${pan.x}%; top:${pan.y}%; width:${pan.w}%; height:${pan.h}%; background:${pan.color}; border-color:${pan.border}; z-index:${pan.layer + 2};">
+            <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-white/75 text-stone-800 shadow-2xs">
+              ${pan.name}
+            </span>
+          </div>
+        `).join('')}
+
+        <!-- Render Baut Pin Kue -->
+        ${unscrewState.bolts.filter(b => !b.removed).map(bolt => {
+          const cake = CAKE_TYPES[bolt.cakeIdx];
+          const blocked = isBoltBlockedByUpperPan(bolt);
+          return `
+            <button onclick="handleBoltTap('${bolt.id}')"
+              style="left:${bolt.x}%; top:${bolt.y}%; transform: translate(-50%, -50%); z-index: 20; background:${cake.bg}; border-color:${cake.border};"
+              class="absolute w-10 h-10 rounded-full border-3 flex items-center justify-center text-lg shadow-lg transition active:scale-90 ${blocked ? 'opacity-65 cursor-not-allowed' : 'ring-2 ring-white hover:scale-110'}">
+              <span>${cake.emoji}</span>
+              ${blocked ? `<span class="absolute -bottom-1 -right-1 text-[10px] bg-stone-800 text-white rounded-full px-1">🔒</span>` : ''}
+            </button>
+          `;
+        }).join('')}
+      </div>
+
+      <!-- Action Bar: Undo & Booster -->
+      <div class="grid grid-cols-2 gap-2.5 pt-2">
+        <button onclick="undoUnscrew()" class="card-surface py-2.5 px-3 rounded-2xl text-xs font-extrabold flex items-center justify-center gap-1.5 active:scale-95">
+          <span>↩️ Undo</span>
+          <span class="soft-surface px-2 py-0.5 rounded-full text-[11px]">${totalUndo}</span>
+        </button>
+        <button onclick="boosterUnscrew()" class="btn-gold py-2.5 px-3 rounded-2xl text-xs font-extrabold flex items-center justify-center gap-1.5">
+          <span>${t('remove1BoltBooster')}</span>
+          <span class="bg-black/15 px-2 py-0.5 rounded-full text-[11px]">${gameState.boosterCount}</span>
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function handleBoltTap(boltId) {
+  CafeAudio.initOnGesture();
+  const bolt = unscrewState.bolts.find(b => b.id === boltId);
+  if (!bolt || bolt.removed) return;
+
+  if (isBoltBlockedByUpperPan(bolt)) {
+    CafeAudio.oops();
+    showToast('Baut masih tertutup loyang di atasnya! Lepas loyang atas dulu 🔒', 'error');
+    return;
+  }
+
+  const emptyHoleIdx = unscrewState.spareHoles.findIndex(h => h === null);
+  if (emptyHoleIdx === -1) {
+    CafeAudio.oops();
+    showToast('Kotak pin penuh! Gunakan Undo atau Booster', 'error');
+    return;
+  }
+
+  // Simpan riwayat untuk Undo
+  unscrewState.history.push(JSON.parse(JSON.stringify({
+    pans: unscrewState.pans,
+    bolts: unscrewState.bolts,
+    spareHoles: unscrewState.spareHoles
+  })));
+
+  bolt.removed = true;
+  unscrewState.spareHoles[emptyHoleIdx] = bolt.cakeIdx;
+  CafeAudio.unscrewPop();
+
+  // Cek apakah ada 2 baut kue sejenis di spareHoles -> otomatis dikemas sehingga lubang kosong lagi!
+  const sameIdxList = [];
+  unscrewState.spareHoles.forEach((val, idx) => {
+    if (val === bolt.cakeIdx) sameIdxList.push(idx);
+  });
+  if (sameIdxList.length >= 2) {
+    sameIdxList.slice(0, 2).forEach(idx => {
+      unscrewState.spareHoles[idx] = null;
+    });
+    setTimeout(() => CafeAudio.cafeBell(), 140);
+    showToast('✨ Sepasang pin kue dikemas! Ruang lubang kembali lega!', 'success');
+  }
+
+  // Cek apakah ada loyang yang semua baut penahannya sudah dilepas -> jatuh!
+  let anyPanFell = false;
+  unscrewState.pans.forEach(pan => {
+    if (!pan.fallen) {
+      const remainingBoltsOnPan = unscrewState.bolts.filter(b => !b.removed && b.panIds.includes(pan.id));
+      if (remainingBoltsOnPan.length === 0) {
+        pan.fallen = true;
+        anyPanFell = true;
+      }
+    }
+  });
+
+  if (anyPanFell) {
+    setTimeout(() => CafeAudio.panDrop(), 160);
+  }
+
+  renderUnscrewGame();
+
+  // Cek kemenangan jika semua loyang sudah jatuh
+  if (unscrewState.pans.every(p => p.fallen)) {
+    const earned = rewardLevelStarfruit('Bongkar Loyang');
+    gameState.levelsCompleted.unscrew += 1;
+    saveState();
+
+    setTimeout(() => {
+      openModal(`
+        <div class="text-5xl mb-2 animate-bounce">🔩</div>
+        <h3 class="text-xl font-bold">${t('unscrewWinTitle')}</h3>
+        <p class="text-xs opacity-80 mt-1">${t('unscrewWinDesc')}</p>
+        <div class="soft-surface rounded-2xl p-3 my-3 font-extrabold text-base text-amber-600">
+          + ${earned} 🌟 Belimbing
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="closeModal(); navigateTo('home');" class="soft-surface py-2.5 rounded-2xl text-xs font-extrabold">${t('toCafe')}</button>
+          <button onclick="closeModal(); initUnscrewGame();" class="btn-candy py-2.5 rounded-2xl text-xs font-extrabold">${t('nextLevel')}</button>
+        </div>
+      `);
+    }, 550);
+  }
+}
+
+function undoUnscrew() {
+  if (unscrewState.history.length === 0) {
+    showToast('Belum ada langkah untuk di-Undo', 'info');
+    return;
+  }
+  if (!consumeOneUndo()) {
+    CafeAudio.oops();
+    showToast('Tiket Undo habis! Beli di Shop (15 🌟)', 'error');
+    return;
+  }
+  const prev = unscrewState.history.pop();
+  unscrewState.pans = prev.pans;
+  unscrewState.bolts = prev.bolts;
+  unscrewState.spareHoles = prev.spareHoles;
+  CafeAudio.tap();
+  renderUnscrewGame();
+}
+
+function boosterUnscrew() {
+  if (gameState.boosterCount <= 0) {
+    CafeAudio.oops();
+    showToast('Booster habis! Beli di Shop (30 🌟)', 'error');
+    return;
+  }
+  const activeBolt = unscrewState.bolts.find(b => !b.removed && !isBoltBlockedByUpperPan(b)) ||
+                     unscrewState.bolts.find(b => !b.removed);
+  if (!activeBolt) return;
+
+  gameState.boosterCount -= 1;
+  saveState();
+
+  activeBolt.removed = true;
+  CafeAudio.unscrewPop();
+
+  unscrewState.pans.forEach(pan => {
+    if (!pan.fallen) {
+      const rem = unscrewState.bolts.filter(b => !b.removed && b.panIds.includes(pan.id));
+      if (rem.length === 0) {
+        pan.fallen = true;
+        setTimeout(() => CafeAudio.panDrop(), 150);
+      }
+    }
+  });
+
+  showToast('🪄 Booster langsung melepas 1 baut ke kotak penyimpanan!', 'gold');
+  renderUnscrewGame();
+
+  if (unscrewState.pans.every(p => p.fallen)) {
+    const earned = rewardLevelStarfruit('Bongkar Loyang');
+    gameState.levelsCompleted.unscrew += 1;
+    saveState();
+    setTimeout(() => {
+      openModal(`
+        <div class="text-5xl mb-2 animate-bounce">🔩</div>
+        <h3 class="text-xl font-bold">${t('unscrewWinTitle')}</h3>
+        <div class="soft-surface rounded-2xl p-3 my-3 font-extrabold text-base text-amber-600">
+          + ${earned} 🌟 Belimbing
+        </div>
+        <button onclick="closeModal(); initUnscrewGame();" class="btn-candy w-full py-2.5 rounded-2xl text-xs font-extrabold">${t('nextLevel')}</button>
+      `);
+    }, 550);
+  }
+}
+
+/**
+ * ============================================================================
+ * 9. INISIALISASI APLIKASI SAAT HALAMAN DIMUAT
+ * ============================================================================
+ */
+window.onload = function () {
+  updateHeaderUI();
+  navigateTo('home');
+};
+</script>
+</body>
+</html>
