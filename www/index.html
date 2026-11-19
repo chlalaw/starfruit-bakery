@@ -51,12 +51,13 @@
   }
   .brand { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 16px; color: var(--primary); }
   .chef-badge {
-    width: 34px; height: 34px; border-radius: 50%; background: var(--bg);
+    width: 38px; height: 38px; border-radius: 50%; background: var(--bg);
     border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center;
-    font-size: 18px; position: relative;
+    font-size: 18px; position: relative; overflow: hidden;
   }
+  .chef-badge img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
   .chef-badge.legendary {
-    border-color: #ffb703; box-shadow: 0 0 10px rgba(255, 183, 3, 0.7);
+    border-color: #ffb703; box-shadow: 0 0 12px rgba(255, 183, 3, 0.85);
     background: linear-gradient(135deg, #fff3b0, #ffd166);
   }
   .top-actions { display: flex; align-items: center; gap: 6px; }
@@ -66,17 +67,99 @@
     cursor: pointer;
   }
   .pill.star { background: #fff8e1; border-color: #ffe082; color: #b26a00; }
-  main { flex: 1; padding: 14px; max-width: 500px; width: 100%; margin: 0 auto; padding-bottom: 80px; }
+  .lvl-badge {
+    display: inline-block; background: var(--primary); color: #fff;
+    font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 12px;
+    margin-left: 6px; vertical-align: middle;
+  }
+  main { flex: 1; padding: 14px; max-width: 500px; width: 100%; margin: 0 auto; padding-bottom: 85px; }
   .screen { display: none; animation: fadeIn 0.2s ease; }
   .screen.active { display: block; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* LIVING CHARACTER STAGE & ANIMATIONS */
+  @keyframes chefIdle {
+    0%, 100% { transform: translateY(0px) scaleY(1) rotate(-1.5deg); }
+    50% { transform: translateY(-6px) scaleY(1.025) rotate(1.5deg); }
+  }
+  @keyframes chefCheer {
+    0% { transform: scale(1) translateY(0); }
+    30% { transform: scale(1.08, 0.94) translateY(4px); }
+    60% { transform: scale(0.96, 1.07) translateY(-16px) rotate(3deg); }
+    80% { transform: scale(1.03, 0.98) translateY(-4px) rotate(-2deg); }
+    100% { transform: scale(1) translateY(0) rotate(0deg); }
+  }
+  @keyframes haloSpin {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+  @keyframes sparkleFloat {
+    0%, 100% { opacity: 0.2; transform: scale(0.8) translateY(0); }
+    50% { opacity: 1; transform: scale(1.2) translateY(-6px); }
+  }
+
+  .hero-stage {
+    background: linear-gradient(180deg, var(--card) 0%, var(--bg) 100%);
+    border: 2px solid var(--border); border-radius: 20px;
+    padding: 12px 14px 0 14px; margin-bottom: 14px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    position: relative; overflow: hidden; min-height: 165px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+  }
+  .hero-stage.legendary-stage {
+    border-color: #ffb703;
+    background: linear-gradient(180deg, #fffdf5 0%, #fff3b0 100%);
+  }
+  .hero-info { flex: 1; padding-bottom: 14px; z-index: 2; }
+  .speech-bubble {
+    background: #fff; border: 1.5px solid var(--border); border-radius: 14px;
+    padding: 8px 11px; font-size: 12px; font-weight: 700; color: var(--text);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05); margin-bottom: 8px; position: relative;
+    line-height: 1.35;
+  }
+  .chef-sprite-wrap {
+    position: relative; width: 135px; height: 155px; flex-shrink: 0;
+    display: flex; align-items: flex-end; justify-content: center; cursor: pointer; z-index: 2;
+  }
+  .legendary-halo {
+    position: absolute; top: 52%; left: 50%; width: 128px; height: 128px;
+    border-radius: 50%; border: 3px dashed #ffb703;
+    background: radial-gradient(circle, rgba(255,215,0,0.35) 0%, transparent 70%);
+    animation: haloSpin 12s linear infinite; display: none; pointer-events: none;
+  }
+  .hero-stage.legendary-stage .legendary-halo { display: block; }
+  .chef-sprite {
+    width: 132px; height: 152px; object-fit: contain; object-position: bottom center;
+    transform-origin: bottom center;
+    animation: chefIdle 3.2s ease-in-out infinite;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.12));
+  }
+  .chef-sprite.cheer {
+    animation: chefCheer 0.65s ease;
+  }
+  .sparkle-dot {
+    position: absolute; font-size: 14px; pointer-events: none;
+    animation: sparkleFloat 2.4s ease-in-out infinite;
+  }
+
+  /* Mini Companion in Gameplay */
+  .game-companion {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--card); border: 1.5px solid var(--border); border-radius: 14px;
+    padding: 6px 12px; margin-bottom: 10px; cursor: pointer;
+  }
+  .mini-sprite {
+    width: 46px; height: 50px; object-fit: contain; object-position: bottom center;
+    transform-origin: bottom center; animation: chefIdle 2.8s ease-in-out infinite;
+  }
+  .mini-sprite.cheer { animation: chefCheer 0.6s ease; }
 
   .card {
     background: var(--card); border: 2px solid var(--border); border-radius: 16px;
     padding: 14px; margin-bottom: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.03);
   }
   h2 { margin: 0 0 10px 0; font-size: 18px; }
-  h3 { margin: 0 0 8px 0; font-size: 15px; }
+  h3 { margin: 0 0 6px 0; font-size: 15px; }
   p { margin: 0 0 8px 0; font-size: 13px; color: var(--muted); line-height: 1.4; }
 
   .btn {
@@ -86,24 +169,22 @@
     transition: transform 0.1s, background 0.2s; width: 100%;
   }
   .btn:active { transform: scale(0.97); }
-  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .btn.secondary { background: var(--bg); color: var(--text); border: 1.5px solid var(--border); }
   .btn.accent { background: var(--accent); color: #3d2516; }
-  .btn.sm { padding: 7px 11px; font-size: 12px; width: auto; border-radius: 10px; }
+  .btn.sm { padding: 6px 10px; font-size: 12px; width: auto; border-radius: 10px; }
 
-  .mode-grid { display: grid; gap: 12px; }
+  .mode-grid { display: grid; gap: 10px; }
   .mode-card {
     background: var(--card); border: 2px solid var(--border); border-radius: 16px;
-    padding: 14px; display: flex; align-items: center; gap: 14px; cursor: pointer;
+    padding: 12px 14px; display: flex; align-items: center; gap: 14px; cursor: pointer;
     transition: transform 0.15s, border-color 0.2s;
   }
   .mode-card:active { transform: scale(0.98); border-color: var(--primary); }
   .mode-icon {
-    width: 54px; height: 54px; border-radius: 14px; background: var(--bg);
-    display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0;
+    width: 50px; height: 50px; border-radius: 14px; background: var(--bg);
+    display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0;
   }
 
-  /* Bottom Nav */
   nav {
     position: fixed; bottom: 0; left: 0; right: 0; background: var(--card);
     border-top: 2px solid var(--border); display: flex; justify-content: space-around;
@@ -116,19 +197,23 @@
   .nav-btn span.ico { font-size: 20px; }
   .nav-btn.active { color: var(--primary); }
 
-  /* Game Top Bar */
   .game-bar {
     display: flex; justify-content: space-between; align-items: center; gap: 6px;
-    margin-bottom: 12px; background: var(--card); padding: 8px 10px;
+    margin-bottom: 8px; background: var(--card); padding: 8px 10px;
     border-radius: 14px; border: 1.5px solid var(--border);
   }
   .tool-row { display: flex; gap: 6px; }
 
   /* Mode 1: Cake Sort */
+  @keyframes jellyBounce {
+    0% { transform: scale(1.2, 0.8); }
+    50% { transform: scale(0.9, 1.1); }
+    100% { transform: scale(1, 1); }
+  }
   .tubes-wrap { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; padding: 10px 0; }
   .tube {
     width: 54px; height: 176px; border: 3px solid var(--border); border-top: none;
-    border-radius: 0 0 24px 24px; background: rgba(255,255,255,0.6);
+    border-radius: 0 0 24px 24px; background: rgba(255,255,255,0.7);
     display: flex; flex-direction: column-reverse; align-items: center; padding: 6px 4px;
     gap: 4px; cursor: pointer; transition: transform 0.15s, border-color 0.15s;
   }
@@ -136,6 +221,7 @@
   .cake-slice {
     width: 42px; height: 36px; border-radius: 10px; display: flex; align-items: center;
     justify-content: center; font-size: 22px; background: var(--bg); border: 1.5px solid var(--border);
+    animation: jellyBounce 0.25s ease;
   }
 
   /* Mode 2: 10x10 Block Puzzle */
@@ -148,8 +234,7 @@
     background: var(--card); border-radius: 4px; display: flex; align-items: center;
     justify-content: center; font-size: 16px; cursor: pointer;
   }
-  .cell-10.filled { background: #ffe5ec; }
-  .cell-10.preview { background: #ffd166; opacity: 0.7; }
+  .cell-10.filled { background: #ffe5ec; animation: jellyBounce 0.2s ease; }
   .pieces-tray { display: flex; justify-content: space-around; gap: 8px; min-height: 84px; }
   .piece-slot {
     flex: 1; background: var(--card); border: 2px solid var(--border); border-radius: 12px;
@@ -169,23 +254,24 @@
     border: 2px inset #ced4da; display: flex; align-items: center; justify-content: center; font-size: 20px;
   }
   .tray-stage {
-    position: relative; height: 250px; background: #faedcd; border: 3px solid #d4a373;
+    position: relative; height: 270px; background: #faedcd; border: 3px solid #d4a373;
     border-radius: 16px; overflow: hidden; margin-bottom: 10px;
   }
   .plate {
     position: absolute; border-radius: 12px; border: 2px solid rgba(0,0,0,0.15);
     display: flex; align-items: center; justify-content: center; font-weight: 800;
-    font-size: 13px; color: rgba(0,0,0,0.5); transition: transform 0.5s ease, opacity 0.5s ease;
+    font-size: 13px; color: rgba(0,0,0,0.55); transition: transform 0.55s ease, opacity 0.55s ease;
     box-shadow: 0 4px 8px rgba(0,0,0,0.12);
   }
-  .plate.fallen { transform: translateY(320px) rotate(18deg); opacity: 0; pointer-events: none; }
+  .plate.fallen { transform: translateY(340px) rotate(18deg); opacity: 0; pointer-events: none; }
   .bolt {
     position: absolute; width: 34px; height: 34px; border-radius: 50%;
     background: #fff; border: 2.5px solid #495057; display: flex; align-items: center;
     justify-content: center; font-size: 18px; cursor: pointer; z-index: 10;
     box-shadow: 0 2px 5px rgba(0,0,0,0.25); transform: translate(-50%, -50%);
+    transition: transform 0.15s;
   }
-  .bolt:active { transform: translate(-50%, -50%) scale(0.9); }
+  .bolt:active { transform: translate(-50%, -50%) scale(0.85) rotate(90deg); }
 
   /* Gacha & Cards */
   .set-tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 10px; }
@@ -200,7 +286,7 @@
     background: var(--bg); display: flex; flex-direction: column; align-items: center;
     justify-content: center; font-size: 20px; padding: 4px; text-align: center;
   }
-  .g-card.owned { background: #fff; border-color: var(--accent); box-shadow: 0 2px 6px rgba(255,183,3,0.2); }
+  .g-card.owned { background: #fff; border-color: var(--accent); box-shadow: 0 2px 6px rgba(255,183,3,0.2); animation: jellyBounce 0.3s ease; }
   .g-card span.lbl { font-size: 9px; font-weight: 700; margin-top: 2px; color: var(--text); }
 
   /* Modal */
@@ -238,7 +324,7 @@
     </div>
   </div>
   <div class="top-actions">
-    <div class="pill star" onclick="switchTab('shop')">🌟 <span id="starCount">20</span></div>
+    <div class="pill star" onclick="switchTab('shop')">🌟 <span id="starCount">25</span></div>
     <div class="pill" onclick="openSettings()">⚙️</div>
   </div>
 </header>
@@ -248,14 +334,24 @@
 <main>
   <!-- HOME SCREEN -->
   <section id="screen-home" class="screen active">
-    <div class="card" id="legendaryBanner" style="display:none; background:linear-gradient(135deg,#fff8e1,#ffecb3); border-color:#ffb703;">
-      <div class="row-between" style="margin-bottom:4px;">
-        <strong style="color:#b26a00;">👑 <span data-i18n="legendActive">Koki Legendaris Aktif!</span></strong>
-        <span class="pill star" style="font-size:11px;">Undo Gratis: <span id="freeUndoLeft">3</span>/3</span>
+    <!-- LIVING CHARACTER STAGE -->
+    <div class="hero-stage" id="heroStage">
+      <span class="sparkle-dot" style="top:12px; left:14px;">✨</span>
+      <span class="sparkle-dot" style="top:16px; right:135px; animation-delay:0.8s;">🍓</span>
+      <div class="hero-info">
+        <div class="speech-bubble" id="chefSpeech">Selamat datang di Starfruit Bakery! Yuk panggang kue hari ini~ 🍰</div>
+        <div id="legendStatusTag" style="font-size:11px; font-weight:800; color:#b26a00; margin-bottom:6px; display:none;">
+          👑 Koki Legendaris • Undo Gratis: <span id="freeUndoLeft">3</span>/3
+        </div>
+        <div style="display:flex; gap:6px;">
+          <button class="btn sm" id="btnSelectGirl" onclick="setChefGender('female')">👩‍🍳 <span data-i18n="chefFemale">Koki Cewek</span></button>
+          <button class="btn sm secondary" id="btnSelectBoy" onclick="setChefGender('male')">👨‍🍳 <span data-i18n="chefMale">Koki Cowok</span></button>
+        </div>
       </div>
-      <div style="display:flex; gap:6px; margin-top:6px;">
-        <button class="btn sm secondary" onclick="setChefGender('female')">👩‍🍳 <span data-i18n="chefFemale">Koki Cewek</span></button>
-        <button class="btn sm secondary" onclick="setChefGender('male')">👨‍🍳 <span data-i18n="chefMale">Koki Cowok</span></button>
+      <div class="chef-sprite-wrap" onclick="pokeChef()">
+        <div class="legendary-halo"></div>
+        <img id="heroChefImg" class="chef-sprite" src="assets/chef-girl.png" alt="Chef" onerror="this.style.display='none'; document.getElementById('heroChefFallback').style.display='block';">
+        <div id="heroChefFallback" style="display:none; font-size:84px; line-height:1.1;">👩‍🍳</div>
       </div>
     </div>
 
@@ -264,21 +360,21 @@
       <div class="mode-card" onclick="startMode('sort')">
         <div class="mode-icon">🍰</div>
         <div>
-          <h3 data-i18n="mode1Title">1. Sortir Kue</h3>
+          <h3><span data-i18n="mode1Title">1. Sortir Kue</span> <span class="lvl-badge" id="homeLvlSort">Lv. 1</span></h3>
           <p data-i18n="mode1Desc">Kelompokkan potongan kue sejenis ke dalam wadah. Hadiah 5–8 🌟</p>
         </div>
       </div>
       <div class="mode-card" onclick="startMode('block')">
         <div class="mode-icon">🧇</div>
         <div>
-          <h3 data-i18n="mode2Title">2. Blok Puzzle Kue 10x10</h3>
+          <h3><span data-i18n="mode2Title">2. Blok Puzzle Kue 10x10</span> <span class="lvl-badge" id="homeLvlBlock">Lv. 1</span></h3>
           <p data-i18n="mode2Desc">Susun blok kue di papan 10x10 dan penuhi baris/kolom. Hadiah 5–8 🌟</p>
         </div>
       </div>
       <div class="mode-card" onclick="startMode('bolt')">
         <div class="mode-icon">🔩</div>
         <div>
-          <h3 data-i18n="mode3Title">3. Bongkar Loyang Kue</h3>
+          <h3><span data-i18n="mode3Title">3. Bongkar Loyang Kue</span> <span class="lvl-badge" id="homeLvlBolt">Lv. 1</span></h3>
           <p data-i18n="mode3Desc">Lepas baut loyang dengan urutan tepat agar papan jatuh. Hadiah 5–8 🌟</p>
         </div>
       </div>
@@ -289,11 +385,21 @@
   <section id="screen-game" class="screen">
     <div class="game-bar">
       <button class="btn sm secondary" onclick="exitGame()">⬅️ <span data-i18n="back">Menu</span></button>
-      <strong id="gameTitle" style="font-size:14px;">Sortir Kue</strong>
+      <div style="text-align:center;">
+        <div id="gameTitle" style="font-size:13px; font-weight:800;">Sortir Kue</div>
+        <div id="gameLevelBadge" style="font-size:11px; font-weight:800; color:var(--primary);">Level 1</div>
+      </div>
       <div class="tool-row">
         <button class="btn sm secondary" id="btnUndo" onclick="useUndo()">↩️ <span id="undoLabel">Undo</span></button>
         <button class="btn sm accent" id="btnBooster" onclick="useBooster()">✨ <span id="boosterCount">0</span></button>
       </div>
+    </div>
+
+    <!-- MINI LIVING COMPANION IN GAME -->
+    <div class="game-companion" onclick="pokeGameChef()">
+      <img id="gameChefImg" class="mini-sprite" src="assets/chef-girl.png" alt="Chef" onerror="this.style.display='none'; document.getElementById('gameChefFallback').style.display='block';">
+      <span id="gameChefFallback" style="display:none; font-size:32px;">👩‍🍳</span>
+      <div id="gameChefTalk" style="font-size:12px; font-weight:700; color:var(--text);">Semangat! Susun kuenya pelan-pelan ya~ ✨</div>
     </div>
 
     <div id="area-sort" style="display:none;">
@@ -303,7 +409,7 @@
 
     <div id="area-block" style="display:none;">
       <div class="row-between" style="padding:0 6px;">
-        <span style="font-size:13px; font-weight:700;"><span data-i18n="score">Skor</span>: <span id="blockScore">0</span> / 150</span>
+        <span style="font-size:13px; font-weight:700;"><span data-i18n="score">Skor</span>: <span id="blockScore">0</span> / <span id="blockTarget">150</span></span>
         <span style="font-size:12px; color:var(--muted);" data-i18n="blockHint">Pilih blok lalu ketuk papan 10x10</span>
       </div>
       <div id="board10" class="board-10"></div>
@@ -435,12 +541,23 @@
   </div>
 </div>
 
+<!-- LEVEL CLEAR MODAL -->
+<div id="modalLevelClear" class="modal-backdrop">
+  <div class="modal" style="text-align:center;">
+    <h2>🎉 <span id="clearLevelTitle">Level 1 Selesai!</span></h2>
+    <p id="clearRewardText">Kamu mendapatkan +7 🌟 Belimbing!</p>
+    <button class="btn" style="margin-bottom:8px;" onclick="nextLevelPlay()">▶️ <span data-i18n="nextLevel">Lanjut Level Berikutnya</span></button>
+    <button class="btn secondary" onclick="closeLevelClearToMenu()" data-i18n="backToMenu">Kembali ke Menu</button>
+  </div>
+</div>
+
 <script>
 // --- STATE & STORAGE ---
 const DEFAULT_STATE = {
   stars: 25,
   undos: 1,
   boosters: 1,
+  levels: { sort: 1, block: 1, bolt: 1 },
   theme: 'default',
   unlockedThemes: ['default'],
   lang: 'id',
@@ -456,7 +573,9 @@ const DEFAULT_STATE = {
   user: null
 };
 
-let state = JSON.parse(localStorage.getItem('starfruit_bakery_save') || 'null') || JSON.parse(JSON.stringify(DEFAULT_STATE));
+let saved = JSON.parse(localStorage.getItem('starfruit_bakery_save') || 'null');
+let state = Object.assign({}, JSON.parse(JSON.stringify(DEFAULT_STATE)), saved || {});
+if (!state.levels) state.levels = { sort: 1, block: 1, bolt: 1 };
 
 function saveState() {
   const today = new Date().toDateString();
@@ -519,6 +638,47 @@ function startBGM() {
   }, 600);
 }
 
+// --- LIVING CHARACTER REACTIONS ---
+const CHEF_LINES_ID = [
+  "Selamat datang di Starfruit Bakery! Yuk panggang kue hari ini~ 🍰",
+  "Krim stroberinya sudah siap! Mau main mode yang mana nih? 🍓",
+  "Kumpulkan Belimbing 🌟 sebanyak-banyaknya buat buka kartu resep!",
+  "Hehe, hati-hati adonannya tumpah ya Koki~ 👩‍🍳✨"
+];
+const CHEF_LINES_EN = [
+  "Welcome to Starfruit Bakery! Let's bake sweet treats today~ 🍰",
+  "Strawberry cream is ready! Which puzzle mode shall we play? 🍓",
+  "Collect Starfruits 🌟 to unlock rare recipe cards!",
+  "Hehe, don't drop the frosting Chef~ 👩‍🍳✨"
+];
+
+function triggerCheer(elId) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  el.classList.remove('cheer');
+  void el.offsetWidth;
+  el.classList.add('cheer');
+}
+
+function pokeChef() {
+  initAudio();
+  playCafeBell();
+  triggerCheer('heroChefImg');
+  const pool = state.lang === 'id' ? CHEF_LINES_ID : CHEF_LINES_EN;
+  const line = pool[Math.floor(Math.random() * pool.length)];
+  document.getElementById('chefSpeech').textContent = line;
+}
+
+function pokeGameChef(customLine) {
+  initAudio();
+  if (!customLine) playPop();
+  triggerCheer('gameChefImg');
+  const defaultLines = state.lang === 'id'
+    ? ["Wah, langkah yang bagus! 🍓", "Teruskan Koki, dikit lagi selesai! ✨", "Yummy! Aroma kuenya wangi banget~ 🍰"]
+    : ["Great move Chef! 🍓", "Keep going, almost there! ✨", "Yummy! Smells like fresh cake~ 🍰"];
+  document.getElementById('gameChefTalk').textContent = customLine || defaultLines[Math.floor(Math.random() * defaultLines.length)];
+}
+
 // --- I18N ---
 const I18N = {
   id: {
@@ -545,7 +705,8 @@ const I18N = {
     stuckTitle: 'Langkah Habis / Stuck!',
     stuckDesc: 'Bersihkan sebagian papan dan lanjutkan permainan?',
     reviveBtn: 'Lanjut (35 Belimbing)', noThanks: 'Tidak, Akhiri',
-    legendActive: 'Koki Legendaris Aktif!', chefFemale: 'Koki Cewek', chefMale: 'Koki Cowok'
+    chefFemale: 'Cewek', chefMale: 'Cowok',
+    nextLevel: 'Lanjut Level Berikutnya', backToMenu: 'Kembali ke Menu'
   },
   en: {
     chooseMode: 'Choose Game Mode',
@@ -571,7 +732,8 @@ const I18N = {
     stuckTitle: 'Out of Moves / Stuck!',
     stuckDesc: 'Clear space on the board and continue playing?',
     reviveBtn: 'Continue (35 Starfruit)', noThanks: 'No, End Game',
-    legendActive: 'Legendary Chef Active!', chefFemale: 'Female Chef', chefMale: 'Male Chef'
+    chefFemale: 'Girl', chefMale: 'Boy',
+    nextLevel: 'Next Level', backToMenu: 'Back to Menu'
   }
 };
 
@@ -598,10 +760,41 @@ function showToast(msg) {
 function renderTopBar() {
   document.getElementById('starCount').textContent = state.stars;
   document.getElementById('boosterCount').textContent = state.boosters;
+  document.getElementById('homeLvlSort').textContent = `Lv. ${state.levels.sort}`;
+  document.getElementById('homeLvlBlock').textContent = `Lv. ${state.levels.block}`;
+  document.getElementById('homeLvlBolt').textContent = `Lv. ${state.levels.bolt}`;
+
+  const isMale = state.chefGender === 'male';
+  const imgPath = isMale ? 'assets/chef-boy.png' : 'assets/chef-girl.png';
+  const fallbackEmoji = isMale ? '👨‍🍳' : '👩‍🍳';
+
   const av = document.getElementById('chefAvatar');
-  av.textContent = state.chefGender === 'male' ? '👨‍🍳' : '👩‍🍳';
+  av.innerHTML = `<img src="${imgPath}" alt="Chef" onerror="this.parentElement.textContent='${fallbackEmoji}'">`;
   av.classList.toggle('legendary', state.legendaryUnlocked);
-  document.getElementById('legendaryBanner').style.display = state.legendaryUnlocked ? 'block' : 'none';
+
+  const heroImg = document.getElementById('heroChefImg');
+  const heroFb = document.getElementById('heroChefFallback');
+  heroFb.textContent = fallbackEmoji;
+  if (heroImg.getAttribute('src') !== imgPath) {
+    heroImg.style.display = 'block';
+    heroFb.style.display = 'none';
+    heroImg.src = imgPath;
+  }
+
+  const gameImg = document.getElementById('gameChefImg');
+  const gameFb = document.getElementById('gameChefFallback');
+  gameFb.textContent = fallbackEmoji;
+  if (gameImg.getAttribute('src') !== imgPath) {
+    gameImg.style.display = 'block';
+    gameFb.style.display = 'none';
+    gameImg.src = imgPath;
+  }
+
+  document.getElementById('btnSelectGirl').className = !isMale ? 'btn sm' : 'btn sm secondary';
+  document.getElementById('btnSelectBoy').className = isMale ? 'btn sm' : 'btn sm secondary';
+
+  document.getElementById('heroStage').classList.toggle('legendary-stage', state.legendaryUnlocked);
+  document.getElementById('legendStatusTag').style.display = state.legendaryUnlocked ? 'block' : 'none';
   document.getElementById('freeUndoLeft').textContent = state.freeUndosLeft;
 
   const hasFree = state.legendaryUnlocked && state.freeUndosLeft > 0;
@@ -634,11 +827,30 @@ function exitGame() {
 
 function rewardWin() {
   playWin();
-  const earned = Math.floor(Math.random() * 4) + 5; // 5 - 8 Starfruit
+  triggerCheer('gameChefImg');
+  const completedLvl = state.levels[currentMode];
+  const earned = Math.floor(Math.random() * 4) + 5;
   state.stars += earned;
+  state.levels[currentMode] = completedLvl + 1;
   saveState();
-  showToast(`🎉 +${earned} 🌟 Belimbing!`);
-  setTimeout(() => exitGame(), 1200);
+
+  document.getElementById('clearLevelTitle').textContent =
+    state.lang === 'id' ? `Level ${completedLvl} Selesai!` : `Level ${completedLvl} Complete!`;
+  document.getElementById('clearRewardText').textContent =
+    state.lang === 'id'
+      ? `Kamu dapat +${earned} 🌟 Belimbing! Lanjut ke Level ${state.levels[currentMode]}?`
+      : `You earned +${earned} 🌟 Starfruit! Ready for Level ${state.levels[currentMode]}?`;
+  document.getElementById('modalLevelClear').classList.add('open');
+}
+
+function nextLevelPlay() {
+  closeModals();
+  startMode(currentMode);
+}
+
+function closeLevelClearToMenu() {
+  closeModals();
+  exitGame();
 }
 
 // --- GAME ENGINE ---
@@ -653,19 +865,23 @@ function startMode(mode) {
   document.getElementById('screen-game').classList.add('active');
   document.querySelector('nav').style.display = 'none';
 
+  const curLvl = state.levels[mode] || 1;
+  document.getElementById('gameLevelBadge').textContent = `Level ${curLvl}`;
+  pokeGameChef(state.lang === 'id' ? `Ayo selesaikan Level ${curLvl}! Semangat~ 🍰` : `Let's beat Level ${curLvl}! You got this~ 🍰`);
+
   ['sort', 'block', 'bolt'].forEach(m => {
     document.getElementById(`area-${m}`).style.display = (m === mode) ? 'block' : 'none';
   });
 
   if (mode === 'sort') {
     document.getElementById('gameTitle').textContent = I18N[state.lang].mode1Title;
-    initSortGame();
+    initSortGame(curLvl);
   } else if (mode === 'block') {
     document.getElementById('gameTitle').textContent = I18N[state.lang].mode2Title;
-    initBlockGame();
+    initBlockGame(curLvl);
   } else {
     document.getElementById('gameTitle').textContent = I18N[state.lang].mode3Title;
-    initBoltGame();
+    initBoltGame(curLvl);
   }
 }
 
@@ -692,6 +908,7 @@ function useBooster() {
   state.boosters--;
   saveState();
   playCafeBell();
+  pokeGameChef('✨ Mantra kue ajaib aktif!');
   if (currentMode === 'sort') {
     tubes.push([]);
     renderSort();
@@ -710,12 +927,19 @@ function useBooster() {
 // --- MODE 1: CAKE SORT ---
 let tubes = [];
 let selectedTube = null;
-function initSortGame() {
-  const types = ['🍰', '🧁', '🍩'];
+function initSortGame(lvl) {
+  const allTypes = ['🍰', '🧁', '🍩', '🍪', '🍮', '🥐'];
+  const numTypes = Math.min(6, 3 + Math.floor((lvl - 1) / 2));
+  const types = allTypes.slice(0, numTypes);
   let pool = [];
   types.forEach(t => { for (let i = 0; i < 4; i++) pool.push(t); });
   pool.sort(() => Math.random() - 0.5);
-  tubes = [pool.slice(0,4), pool.slice(4,8), pool.slice(8,12), [], []];
+
+  tubes = [];
+  for (let i = 0; i < numTypes; i++) {
+    tubes.push(pool.slice(i * 4, (i + 1) * 4));
+  }
+  tubes.push([], []);
   selectedTube = null;
   renderSort();
 }
@@ -752,7 +976,10 @@ function onTubeClick(idx) {
     undoStack.push(JSON.stringify(tubes));
     to.push(from.pop());
     playPop();
-    if (to.length === 4 && to.every(x => x === cake)) playCafeBell();
+    if (to.length === 4 && to.every(x => x === cake)) {
+      playCafeBell();
+      pokeGameChef('Yeay! Satu wadah kue rapi sempurna! 🎉');
+    }
   }
   selectedTube = null;
   renderSort();
@@ -774,10 +1001,13 @@ let grid10 = [];
 let handPieces = [];
 let selectedPieceIdx = 0;
 let blockScore = 0;
+let blockTargetScore = 150;
 
-function initBlockGame() {
+function initBlockGame(lvl) {
   grid10 = Array.from({length: 10}, () => Array(10).fill(null));
   blockScore = 0;
+  blockTargetScore = 150 + (lvl - 1) * 50;
+  document.getElementById('blockTarget').textContent = blockTargetScore;
   refillHand();
   renderBlock();
 }
@@ -850,7 +1080,6 @@ function placeBlockAt(r0, c0) {
   handPieces[selectedPieceIdx] = null;
   playPop();
 
-  // Clear full rows/cols
   let fullRows = [], fullCols = [];
   for (let r = 0; r < 10; r++) if (grid10[r].every(x => x)) fullRows.push(r);
   for (let c = 0; c < 10; c++) if (grid10.every(row => row[c])) fullCols.push(c);
@@ -859,6 +1088,7 @@ function placeBlockAt(r0, c0) {
   if (fullRows.length + fullCols.length > 0) {
     blockScore += (fullRows.length + fullCols.length) * 30;
     playCafeBell();
+    pokeGameChef('Keren!! Baris kue penuh langsung terkirim! 🌟');
   }
 
   if (handPieces.every(x => !x)) refillHand();
@@ -866,7 +1096,7 @@ function placeBlockAt(r0, c0) {
 
   renderBlock();
 
-  if (blockScore >= 150) return rewardWin();
+  if (blockScore >= blockTargetScore) return rewardWin();
   if (!hasAnyMove()) {
     document.getElementById('modalRevive').classList.add('open');
   }
@@ -892,20 +1122,56 @@ let plates = [];
 let bolts = [];
 let holes = [];
 
-function initBoltGame() {
-  holes = [null, null, null, null, null];
-  plates = [
-    { id: 1, name: 'Loyang Tart', color: '#ffccd5', x: 40, y: 40, w: 220, h: 65 },
-    { id: 2, name: 'Loyang Choco', color: '#ddb892', x: 70, y: 95, w: 190, h: 75 },
-    { id: 3, name: 'Cetakan Bintang', color: '#bde0fe', x: 50, y: 155, w: 210, h: 60 }
-  ];
-  bolts = [
-    { id: 1, x: 65, y: 72, plateIds: [1], removed: false },
-    { id: 2, x: 235, y: 72, plateIds: [1, 2], removed: false },
-    { id: 3, x: 95, y: 130, plateIds: [2], removed: false },
-    { id: 4, x: 230, y: 182, plateIds: [2, 3], removed: false },
-    { id: 5, x: 80, y: 185, plateIds: [3], removed: false }
-  ];
+function initBoltGame(lvl) {
+  const variant = (lvl - 1) % 3;
+  if (variant === 0) {
+    holes = [null, null, null, null, null];
+    plates = [
+      { id: 1, name: 'Loyang Tart', color: '#ffccd5', x: 35, y: 35, w: 225, h: 65 },
+      { id: 2, name: 'Loyang Choco', color: '#ddb892', x: 65, y: 95, w: 195, h: 75 },
+      { id: 3, name: 'Cetakan Bintang', color: '#bde0fe', x: 45, y: 160, w: 215, h: 60 }
+    ];
+    bolts = [
+      { id: 1, x: 60, y: 68, plateIds: [1], removed: false },
+      { id: 2, x: 235, y: 68, plateIds: [1, 2], removed: false },
+      { id: 3, x: 90, y: 132, plateIds: [2], removed: false },
+      { id: 4, x: 230, y: 185, plateIds: [2, 3], removed: false },
+      { id: 5, x: 75, y: 188, plateIds: [3], removed: false }
+    ];
+  } else if (variant === 1) {
+    holes = [null, null, null, null, null, null];
+    plates = [
+      { id: 1, name: 'Loyang Matcha', color: '#b7e4c7', x: 30, y: 30, w: 130, h: 110 },
+      { id: 2, name: 'Loyang Berry', color: '#ffc8dd', x: 145, y: 30, w: 135, h: 110 },
+      { id: 3, name: 'Loyang Karamel', color: '#ffd166', x: 55, y: 120, w: 200, h: 70 },
+      { id: 4, name: 'Loyang Vanilla', color: '#e2ece9', x: 40, y: 180, w: 225, h: 55 }
+    ];
+    bolts = [
+      { id: 1, x: 55, y: 55, plateIds: [1], removed: false },
+      { id: 2, x: 135, y: 85, plateIds: [1, 2], removed: false },
+      { id: 3, x: 255, y: 55, plateIds: [2], removed: false },
+      { id: 4, x: 95, y: 130, plateIds: [1, 3], removed: false },
+      { id: 5, x: 215, y: 130, plateIds: [2, 3], removed: false },
+      { id: 6, x: 155, y: 185, plateIds: [3, 4], removed: false }
+    ];
+  } else {
+    holes = [null, null, null, null, null, null, null];
+    plates = [
+      { id: 1, name: 'Cetakan Hati', color: '#ffafcc', x: 35, y: 25, w: 230, h: 55 },
+      { id: 2, name: 'Loyang Keju', color: '#ffe66d', x: 45, y: 75, w: 115, h: 110 },
+      { id: 3, name: 'Loyang Moka', color: '#d4a373', x: 150, y: 75, w: 115, h: 110 },
+      { id: 4, name: 'Loyang Pandan', color: '#95d5b2', x: 35, y: 175, w: 230, h: 60 }
+    ];
+    bolts = [
+      { id: 1, x: 60, y: 52, plateIds: [1], removed: false },
+      { id: 2, x: 240, y: 52, plateIds: [1], removed: false },
+      { id: 3, x: 95, y: 82, plateIds: [1, 2], removed: false },
+      { id: 4, x: 205, y: 82, plateIds: [1, 3], removed: false },
+      { id: 5, x: 155, y: 130, plateIds: [2, 3], removed: false },
+      { id: 6, x: 95, y: 180, plateIds: [2, 4], removed: false },
+      { id: 7, x: 205, y: 180, plateIds: [3, 4], removed: false }
+    ];
+  }
   renderBolt();
 }
 
@@ -994,7 +1260,7 @@ function pullGacha() {
   const cardIdx = Math.floor(Math.random() * 10);
   const isNew = !state.cards[setIdx].includes(cardIdx);
   if (isNew) state.cards[setIdx].push(cardIdx);
-  else state.stars += 3; // refund duplikat
+  else state.stars += 3;
 
   checkLegendary();
   saveState();
@@ -1024,6 +1290,11 @@ function setChefGender(g) {
   state.chefGender = g;
   saveState();
   playPop();
+  triggerCheer('heroChefImg');
+  document.getElementById('chefSpeech').textContent =
+    g === 'male'
+      ? (state.lang === 'id' ? 'Halo! Koki siap menghias kue spesial! 👨‍🍳💙' : 'Hello! Ready to decorate special cakes! 👨‍🍳💙')
+      : (state.lang === 'id' ? 'Hai! Ayo kita bikin kue stroberi yang manis~ 👩‍🍳🍓' : 'Hi! Let’s bake sweet strawberry cakes~ 👩‍🍳🍓');
 }
 
 // --- SHOP ---
